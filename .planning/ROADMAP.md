@@ -65,7 +65,13 @@ Plans:
   3. Disjoint SmartGraph enforces vertex uniqueness per partition — an edge connecting vertices from different partitions is rejected
   4. A query joining a satellite collection executes without a network hop to another DB-Server, confirmed by the AQL explain plan showing no `RemoteNode` for the satellite side
   5. With ReadFromFollower enabled, read queries return results from follower replicas; the configured staleness bound is respected
-**Plans**: TBD
+**Plans:** 4/4 plans complete
+
+Plans:
+- [ ] 03-01-PLAN.md — SmartGraph Sharding + Schema Validation (ShardingStrategyEE, SmartGraphSchema, VirtualClusterSmartEdgeCollection)
+- [ ] 03-02-PLAN.md — Satellite Collections + Distribution (SatelliteDistribution, SmartToSat validation)
+- [ ] 03-03-PLAN.md — Shard-local Graph Execution (LocalTraversalNode, SmartGraphProvider, SmartGraphStep, PathValidatorEE)
+- [ ] 03-04-PLAN.md — ReadFromFollower (dirty-read routing, round-robin replica selection, staleness bounds)
 
 ### Phase 4: Search and Backup Operations
 **Goal**: MinHash AQL functions return correct Jaccard similarity estimates, TopK searches on ArangoSearch views apply WAND early termination, hot backup creates restorable point-in-time snapshots, cloud backup uploads snapshots to object storage, and large collection indexes build in parallel without blocking reads
@@ -99,6 +105,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 |-------|----------------|--------|-----------|
 | 1. Foundation and ABI Baseline | 3/3 | Complete   | 2026-03-31 |
 | 2. Security Foundations | 4/4 | Complete   | 2026-03-31 |
-| 3. Graph and Cluster | 0/TBD | Not started | - |
+| 3. Graph and Cluster | 4/4 | Complete | 2026-03-31 |
 | 4. Search and Backup Operations | 0/TBD | Not started | - |
 | 5. DC-to-DC Replication | 0/TBD | Not started | - |
