@@ -2,11 +2,14 @@
 #ifndef ARANGODB_ENCRYPTION_PROVIDER_H
 #define ARANGODB_ENCRYPTION_PROVIDER_H
 
-namespace arangodb {
+// Application-level encryption provider.
+//
+// This header re-exports the RocksDB-level EncryptionProvider from
+// Enterprise/RocksDBEngine/EncryptionProvider.h.  EncryptionFeature
+// creates the RocksDB-level provider directly -- no separate
+// application-level wrapper is needed since the RocksDB provider
+// already handles the full lifecycle.
 
-// TODO: Implement EncryptionProvider (application-level)
-// See also: Enterprise/RocksDBEngine/EncryptionProvider.h for RocksDB-level provider
-
-}  // namespace arangodb
+#include "Enterprise/RocksDBEngine/EncryptionProvider.h"
 
 #endif  // ARANGODB_ENCRYPTION_PROVIDER_H

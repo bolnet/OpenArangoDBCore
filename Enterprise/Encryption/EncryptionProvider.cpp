@@ -1,7 +1,6 @@
-#include "EncryptionProvider.h"
+#include "Enterprise/Encryption/EncryptionProvider.h"
 
-namespace arangodb {
-
-// TODO: Implement EncryptionProvider
-
-}  // namespace arangodb
+// Application-level provider delegates entirely to the RocksDB-level
+// EncryptionProvider.  No additional implementation needed here.
+// See Enterprise/RocksDBEngine/EncryptionProvider.cpp for the full
+// AES-256-CTR implementation.
