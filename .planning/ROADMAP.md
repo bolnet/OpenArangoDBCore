@@ -30,7 +30,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. `LicenseFeature::isEnterprise()` and all capability check methods return `true` in a running ArangoDB instance, verified by querying `/_admin/license`
   4. CI runs the full build with AddressSanitizer (`detect_odr_violation=2`) and exits clean — no ODR violations, no undefined behavior from duplicate symbols
   5. A minimal per-module link test (one symbol per module) passes, confirming static library link order is correct on GNU ld
-**Plans**: TBD
+**Plans:** 3 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Restructure arangod/ to Enterprise/, fix namespaces, create 14 missing stubs
+- [ ] 01-02-PLAN.md — Rewrite CMakeLists.txt, implement LicenseFeature, declare all 6 core features
+- [ ] 01-03-PLAN.md — CI scripts (ASan, namespace audit), test infrastructure (GoogleTest, link tests)
 
 ### Phase 2: Security Foundations
 **Goal**: ArangoDB with OpenArangoDBCore encrypts all data at rest, records compliance audit events, authenticates users against LDAP, applies data masking rules, and enforces enterprise TLS settings
@@ -82,11 +87,11 @@ Decimal phases appear between their surrounding integers in numeric order.
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation and ABI Baseline | 0/TBD | Not started | - |
+| 1. Foundation and ABI Baseline | 0/3 | Planning complete | - |
 | 2. Security Foundations | 0/TBD | Not started | - |
 | 3. Graph and Cluster | 0/TBD | Not started | - |
 | 4. Search and Backup Operations | 0/TBD | Not started | - |
