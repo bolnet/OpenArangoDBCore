@@ -9,7 +9,7 @@ Requirements for full Enterprise parity. Each maps to roadmap phases.
 
 ### Foundation
 
-- [ ] **FOUND-01**: All source files use `namespace arangodb` (matching ArangoDB's expected symbols)
+- [x] **FOUND-01**: All source files use `namespace arangodb` (matching ArangoDB's expected symbols)
 - [ ] **FOUND-02**: CMakeLists.txt integrates correctly with ArangoDB's build system when placed as `enterprise/` directory
 - [ ] **FOUND-03**: Static library links without unresolved symbols when built with `-DUSE_ENTERPRISE=1`
 - [ ] **FOUND-04**: LicenseFeature returns true for all enterprise capability checks (always-enabled)
@@ -145,7 +145,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FOUND-01 | Phase 1 | Pending |
+| FOUND-01 | Phase 1 | Complete |
 | FOUND-02 | Phase 1 | Pending |
 | FOUND-03 | Phase 1 | Pending |
 | FOUND-04 | Phase 1 | Pending |

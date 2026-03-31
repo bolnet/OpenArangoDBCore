@@ -30,7 +30,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. `LicenseFeature::isEnterprise()` and all capability check methods return `true` in a running ArangoDB instance, verified by querying `/_admin/license`
   4. CI runs the full build with AddressSanitizer (`detect_odr_violation=2`) and exits clean — no ODR violations, no undefined behavior from duplicate symbols
   5. A minimal per-module link test (one symbol per module) passes, confirming static library link order is correct on GNU ld
-**Plans:** 3 plans
+**Plans:** 1/3 plans executed
 
 Plans:
 - [ ] 01-01-PLAN.md — Restructure arangod/ to Enterprise/, fix namespaces, create 14 missing stubs
@@ -91,7 +91,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation and ABI Baseline | 0/3 | Planning complete | - |
+| 1. Foundation and ABI Baseline | 1/3 | In Progress|  |
 | 2. Security Foundations | 0/TBD | Not started | - |
 | 3. Graph and Cluster | 0/TBD | Not started | - |
 | 4. Search and Backup Operations | 0/TBD | Not started | - |
