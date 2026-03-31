@@ -12,7 +12,7 @@ OpenArangoDBCore implements all 19 ArangoDB Enterprise modules as an open-source
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation and ABI Baseline** - Namespace correctness, CMake integration, LicenseFeature, and CI with AddressSanitizer — everything downstream depends on this
+- [x] **Phase 1: Foundation and ABI Baseline** - Namespace correctness, CMake integration, LicenseFeature, and CI with AddressSanitizer — everything downstream depends on this (completed 2026-03-31)
 - [ ] **Phase 2: Security Foundations** - Encryption at Rest, Audit Logging, LDAP Authentication, Data Masking, and Enhanced SSL/TLS
 - [ ] **Phase 3: Graph and Cluster** - SmartGraphs, Disjoint SmartGraphs, Satellite Collections, Shard-local Execution, and ReadFromFollower
 - [ ] **Phase 4: Search and Backup Operations** - MinHash similarity, TopK/WAND optimization, Hot Backup, Cloud Backup, and Parallel Index Building
@@ -30,7 +30,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. `LicenseFeature::isEnterprise()` and all capability check methods return `true` in a running ArangoDB instance, verified by querying `/_admin/license`
   4. CI runs the full build with AddressSanitizer (`detect_odr_violation=2`) and exits clean — no ODR violations, no undefined behavior from duplicate symbols
   5. A minimal per-module link test (one symbol per module) passes, confirming static library link order is correct on GNU ld
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
 - [ ] 01-01-PLAN.md — Restructure arangod/ to Enterprise/, fix namespaces, create 14 missing stubs
@@ -91,7 +91,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation and ABI Baseline | 2/3 | In Progress|  |
+| 1. Foundation and ABI Baseline | 3/3 | Complete   | 2026-03-31 |
 | 2. Security Foundations | 0/TBD | Not started | - |
 | 3. Graph and Cluster | 0/TBD | Not started | - |
 | 4. Search and Backup Operations | 0/TBD | Not started | - |
