@@ -2,10 +2,7 @@
 #include <memory>
 #include <string_view>
 #include "ApplicationFeatures/ApplicationServer.h"
-
-namespace arangodb::options {
-class ProgramOptions;
-}
+#include "ProgramOptions/ProgramOptions.h"
 
 namespace arangodb::application_features {
 

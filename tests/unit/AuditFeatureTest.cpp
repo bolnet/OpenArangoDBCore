@@ -206,3 +206,136 @@ TEST(AuditLoggerTest, EventFormatMethod) {
   EXPECT_EQ(formatted,
     "2026-03-31T00:00:00Z|localhost|authorization|testuser|_system|127.0.0.1|basic|action-7");
 }
+
+// ========================================================================
+// AuditFeature Tests
+// ========================================================================
+
+namespace {
+arangodb::application_features::ApplicationServer g_auditServer;
+}  // namespace
+
+TEST(AuditFeatureTest, NameReturnsAudit) {
+  EXPECT_EQ(arangodb::AuditFeature::name(), "Audit");
+}
+
+TEST(AuditFeatureTest, IsConstructible) {
+  // static_assert in AuditFeature.cpp confirms non-abstract
+  arangodb::AuditFeature feature(g_auditServer);
+  (void)feature;
+  SUCCEED();
+}
+
+TEST(AuditFeatureTest, CollectOptionsRegistersAuditOutput) {
+  arangodb::AuditFeature feature(g_auditServer);
+  auto opts = std::make_shared<arangodb::options::ProgramOptions>();
+  // Should not throw -- registers --audit.output
+  EXPECT_NO_THROW(feature.collectOptions(opts));
+}
+
+TEST(AuditFeatureTest, PrepareWithFileOutput) {
+  arangodb::AuditFeature feature(g_auditServer);
+  auto file = tempAuditFile();
+  feature.setOutputSpecs({"file://" + file});
+  EXPECT_NO_THROW(feature.prepare());
+  feature.start();
+  feature.stop();
+  feature.unprepare();
+  fs::remove(file);
+}
+
+TEST(AuditFeatureTest, PrepareParsesSyslogSpec) {
+  arangodb::AuditFeature feature(g_auditServer);
+  feature.setOutputSpecs({"syslog://local0"});
+  EXPECT_NO_THROW(feature.prepare());
+  feature.start();
+  feature.stop();
+  feature.unprepare();
+}
+
+TEST(AuditFeatureTest, LogAuthenticationProducesCorrectTopic) {
+  arangodb::AuditFeature feature(g_auditServer);
+  auto file = tempAuditFile();
+  feature.setOutputSpecs({"file://" + file});
+  feature.prepare();
+  feature.start();
+
+  feature.logAuthentication("admin", "_system", "10.0.0.1", "jwt", "login success");
+
+  feature.stop();
+  feature.unprepare();
+
+  auto lines = readLines(file);
+  ASSERT_GE(lines.size(), 1u);
+  EXPECT_NE(lines[0].find("|authentication|"), std::string::npos)
+      << "logAuthentication should produce topic 'authentication'";
+  EXPECT_NE(lines[0].find("|admin|"), std::string::npos);
+  fs::remove(file);
+}
+
+TEST(AuditFeatureTest, LogAuthorizationProducesCorrectTopic) {
+  arangodb::AuditFeature feature(g_auditServer);
+  auto file = tempAuditFile();
+  feature.setOutputSpecs({"file://" + file});
+  feature.prepare();
+  feature.start();
+
+  feature.logAuthorization("user1", "mydb", "10.0.0.2", "basic", "access denied");
+
+  feature.stop();
+  feature.unprepare();
+
+  auto lines = readLines(file);
+  ASSERT_GE(lines.size(), 1u);
+  EXPECT_NE(lines[0].find("|authorization|"), std::string::npos);
+  fs::remove(file);
+}
+
+TEST(AuditFeatureTest, AllEightTopicsProduceEvents) {
+  arangodb::AuditFeature feature(g_auditServer);
+  auto file = tempAuditFile();
+  feature.setOutputSpecs({"file://" + file});
+  feature.prepare();
+  feature.start();
+
+  feature.logAuthentication("u", "d", "ip", "auth", "t1");
+  feature.logAuthorization("u", "d", "ip", "auth", "t2");
+  feature.logCollection("u", "d", "ip", "auth", "t3");
+  feature.logDatabase("u", "d", "ip", "auth", "t4");
+  feature.logDocument("u", "d", "ip", "auth", "t5");
+  feature.logView("u", "d", "ip", "auth", "t6");
+  feature.logService("u", "d", "ip", "auth", "t7");
+  feature.logHotbackup("u", "d", "ip", "auth", "t8");
+
+  feature.stop();
+  feature.unprepare();
+
+  auto lines = readLines(file);
+  ASSERT_EQ(lines.size(), 8u) << "All 8 topic methods should produce events";
+
+  // Verify each topic appears
+  std::vector<std::string> expectedTopics = {
+    "authentication", "authorization", "collection", "database",
+    "document", "view", "service", "hotbackup"
+  };
+  for (size_t i = 0; i < expectedTopics.size(); ++i) {
+    EXPECT_NE(lines[i].find("|" + expectedTopics[i] + "|"), std::string::npos)
+        << "Line " << i << " should contain topic '" << expectedTopics[i] << "'";
+  }
+
+  fs::remove(file);
+}
+
+TEST(AuditFeatureTest, LifecyclePrepareStartStopUnprepare) {
+  arangodb::AuditFeature feature(g_auditServer);
+  auto file = tempAuditFile();
+  feature.setOutputSpecs({"file://" + file});
+
+  // Full lifecycle should work without errors
+  EXPECT_NO_THROW(feature.prepare());
+  EXPECT_NO_THROW(feature.start());
+  EXPECT_NO_THROW(feature.stop());
+  EXPECT_NO_THROW(feature.unprepare());
+
+  fs::remove(file);
+}
