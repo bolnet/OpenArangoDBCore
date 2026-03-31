@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: planning
-stopped_at: Completed 01-03-PLAN.md
-last_updated: "2026-03-31T03:47:29.912Z"
-last_activity: 2026-03-30 — Roadmap created, 53 requirements mapped across 5 phases
+status: executing
+stopped_at: Completed 02-03-PLAN.md
+last_updated: "2026-03-31T20:51:30.654Z"
+last_activity: 2026-03-31 — Completed LDAP authentication plan (02-03)
 progress:
   total_phases: 5
   completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
+  total_plans: 7
+  completed_plans: 4
   percent: 33
 ---
 
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Every Enterprise-gated feature compiles and links correctly against ArangoDB, providing functionally equivalent open-source alternatives
-**Current focus:** Phase 1 — Foundation and ABI Baseline
+**Current focus:** Phase 2 — Security Foundations
 
 ## Current Position
 
-Phase: 1 of 5 (Foundation and ABI Baseline)
-Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-03-30 — Roadmap created, 53 requirements mapped across 5 phases
+Phase: 2 of 5 (Security Foundations)
+Plan: 3 of 5 in current phase
+Status: executing
+Last activity: 2026-03-31 — Completed LDAP authentication plan (02-03)
 
 Progress: [███░░░░░░░] 33%
 
@@ -53,6 +53,7 @@ Progress: [███░░░░░░░] 33%
 | Phase 01 P01 | 8 | 2 tasks | 65 files |
 | Phase 01 P02 | 3 | 2 tasks | 11 files |
 | Phase 01 P03 | 10 | 2 tasks | 9 files |
+| Phase 02 P03 | 27 | 1 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -71,6 +72,8 @@ Recent decisions affecting current work:
 - [Phase 01]: LicenseFeature::onlySuperUser() returns false, isEnterprise() returns true — open-source build unlocks all enterprise features
 - [Phase 01]: SslServerFeatureEE inherits SslServerFeature (not ApplicationFeature) — respects prepare()/unprepare() final in base class
 - [Phase 01]: Mock headers (Strategy A) in tests/mocks/ allow standalone test compilation without ArangoDB source tree
+- [Phase 02-security-foundations]: Function pointer indirection for mocking libldap C functions -- LDAPFunctions struct holds std::function wrappers, swappable via constructor injection
+- [Phase 02-security-foundations]: Per-request LDAP* handles (no shared handle member) -- guaranteed thread safety under concurrent load
 
 ### Pending Todos
 
@@ -86,6 +89,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-31T03:47:29.910Z
-Stopped at: Completed 01-03-PLAN.md
+Last session: 2026-03-31T20:51:30.651Z
+Stopped at: Completed 02-03-PLAN.md
 Resume file: None

@@ -32,11 +32,11 @@ Requirements for full Enterprise parity. Each maps to roadmap phases.
 
 ### LDAP Authentication & External RBAC
 
-- [ ] **AUTH-01**: LDAPHandler authenticates users against external LDAP directory
-- [ ] **AUTH-02**: LDAP connections use per-request handles (thread-safe under concurrent load)
-- [ ] **AUTH-03**: LDAP role mapping translates directory groups to ArangoDB roles
-- [ ] **AUTH-04**: External RBAC policy evaluation for fine-grained access control
-- [ ] **AUTH-05**: LDAP connection supports TLS (LDAPS and StartTLS)
+- [x] **AUTH-01**: LDAPHandler authenticates users against external LDAP directory
+- [x] **AUTH-02**: LDAP connections use per-request handles (thread-safe under concurrent load)
+- [x] **AUTH-03**: LDAP role mapping translates directory groups to ArangoDB roles
+- [x] **AUTH-04**: External RBAC policy evaluation for fine-grained access control
+- [x] **AUTH-05**: LDAP connection supports TLS (LDAPS and StartTLS)
 
 ### Data Masking
 
@@ -159,11 +159,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ENCR-03 | Phase 2 | Pending |
 | ENCR-04 | Phase 2 | Pending |
 | ENCR-05 | Phase 2 | Pending |
-| AUTH-01 | Phase 2 | Pending |
-| AUTH-02 | Phase 2 | Pending |
-| AUTH-03 | Phase 2 | Pending |
-| AUTH-04 | Phase 2 | Pending |
-| AUTH-05 | Phase 2 | Pending |
+| AUTH-01 | Phase 2 | Complete |
+| AUTH-02 | Phase 2 | Complete |
+| AUTH-03 | Phase 2 | Complete |
+| AUTH-04 | Phase 2 | Complete |
+| AUTH-05 | Phase 2 | Complete |
 | MASK-01 | Phase 2 | Pending |
 | MASK-02 | Phase 2 | Pending |
 | MASK-03 | Phase 2 | Pending |
