@@ -96,3 +96,11 @@ target_compile_options(arango_rclone PRIVATE
   -Woverloaded-virtual
   -Werror
 )
+
+# ============================================================
+# Test suite (GoogleTest via FetchContent)
+# ============================================================
+option(BUILD_TESTING "Build the test suite" ON)
+if(BUILD_TESTING)
+  add_subdirectory(tests)
+endif()
