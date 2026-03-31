@@ -2,10 +2,17 @@
 #ifndef ARANGODB_ATTRIBUTE_MASKING_EE_H
 #define ARANGODB_ATTRIBUTE_MASKING_EE_H
 
-namespace arangodb {
+namespace arangodb::maskings {
 
-// TODO: Implement AttributeMaskingEE (Phase 4)
+/// Registers enterprise masking strategies:
+///   - "xifyFront": replaces characters with 'x', preserving spaces/length
+///   - "email": hashes email into AAAA.BBBB@CCCC.invalid format
+///   - "creditCard": masks all but last 4 digits
+///   - "phone": masks all but last 4 digits, preserving separators
+///
+/// Called from arangodump.cpp after InstallMaskings().
+void InstallMaskingsEE();
 
-}  // namespace arangodb
+}  // namespace arangodb::maskings
 
 #endif  // ARANGODB_ATTRIBUTE_MASKING_EE_H
