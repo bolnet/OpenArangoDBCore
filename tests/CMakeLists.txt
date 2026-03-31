@@ -115,3 +115,38 @@ target_link_libraries(encryption_provider_test
   PRIVATE GTest::gtest_main GTest::gmock OpenSSL::Crypto
 )
 gtest_discover_tests(encryption_provider_test)
+
+# --- Encryption feature tests ---
+add_executable(encryption_feature_test
+  unit/EncryptionFeatureTest.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Encryption/EncryptionFeature.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Encryption/EncryptionProvider.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/RocksDBEngine/EncryptionProvider.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/RocksDBEngine/RocksDBEncryptionUtils.cpp
+)
+target_include_directories(encryption_feature_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(encryption_feature_test
+  PRIVATE GTest::gtest_main GTest::gmock OpenSSL::Crypto
+)
+gtest_discover_tests(encryption_feature_test)
+
+# --- SSL EE feature tests ---
+add_executable(ssl_ee_feature_test
+  unit/SslServerFeatureEETest.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Ssl/SslServerFeatureEE.cpp
+)
+target_include_directories(ssl_ee_feature_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(ssl_ee_feature_test
+  PRIVATE GTest::gtest_main GTest::gmock
+)
+gtest_discover_tests(ssl_ee_feature_test)
