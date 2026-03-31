@@ -47,7 +47,13 @@ Plans:
   3. All 8 audit topics (authentication, authorization, collection, database, document, view, service, hotbackup) produce structured records in the configured file or syslog output without measurable request latency increase
   4. A dump via `arangodump` with masking rules active produces output where configured fields are redacted/hashed, not the original values
   5. ArangoDB accepts client certificates for mTLS and rejects connections using TLS versions or cipher suites below the configured minimum
-**Plans**: TBD
+**Plans:** 4 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — Encryption at Rest (RocksDB EncryptionProvider AES-256-CTR, key management, EncryptionFeature)
+- [ ] 02-02-PLAN.md — Audit Logging (AuditLogger async ring buffer, AuditFeature with 8 topics, file/syslog output)
+- [ ] 02-03-PLAN.md — LDAP Authentication (LDAPHandler, per-request handles, role mapping, TLS)
+- [ ] 02-04-PLAN.md — Data Masking + Enhanced SSL/TLS (enterprise masking strategies, SslServerFeatureEE mTLS/cipher)
 
 ### Phase 3: Graph and Cluster
 **Goal**: SmartGraph traversals execute with correct shard co-location, satellite collections replicate to all DB-Servers for local joins, shard-local traversal rewrites eliminate cross-shard hops, and read queries route to follower replicas when configured
@@ -92,7 +98,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation and ABI Baseline | 3/3 | Complete   | 2026-03-31 |
-| 2. Security Foundations | 0/TBD | Not started | - |
+| 2. Security Foundations | 0/4 | Planning complete | - |
 | 3. Graph and Cluster | 0/TBD | Not started | - |
 | 4. Search and Backup Operations | 0/TBD | Not started | - |
 | 5. DC-to-DC Replication | 0/TBD | Not started | - |
