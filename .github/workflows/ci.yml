@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+env:
+  ASAN_OPTIONS: detect_odr_violation=2
+
+jobs:
+  build-and-test:
+    name: Build and test (${{ matrix.compiler }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - compiler: gcc-13
+            cc: gcc-13
+            cxx: g++-13
+          - compiler: clang-19
+            cc: clang-19
+            cxx: clang++-19
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y cmake ninja-build binutils
+
+          if [ "${{ matrix.compiler }}" = "gcc-13" ]; then
+            sudo apt-get install -y gcc-13 g++-13
+          elif [ "${{ matrix.compiler }}" = "clang-19" ]; then
+            wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc
+            sudo add-apt-repository -y "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-19 main"
+            sudo apt-get update -qq
+            sudo apt-get install -y clang-19 || \
+              (echo "clang-19 not available, skipping" && exit 0)
+          fi
+
+      - name: Configure (ASan + Debug)
+        env:
+          CC: ${{ matrix.cc }}
+          CXX: ${{ matrix.cxx }}
+        run: |
+          cmake -S . -B build \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_CXX_FLAGS="-fsanitize=address -fno-omit-frame-pointer" \
+            -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address" \
+            -DBUILD_TESTING=ON \
+            -G Ninja
+
+      - name: Build
+        run: ASAN_OPTIONS=detect_odr_violation=2 cmake --build build --parallel
+
+      - name: Run tests
+        run: ASAN_OPTIONS=detect_odr_violation=2 ctest --test-dir build -V --output-on-failure
+
+      - name: Symbol audit
+        run: bash ci/symbol-audit.sh build/libopenarangodb_enterprise.a
