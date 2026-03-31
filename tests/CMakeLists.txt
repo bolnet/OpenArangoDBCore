@@ -150,3 +150,101 @@ target_link_libraries(ssl_ee_feature_test
   PRIVATE GTest::gtest_main GTest::gmock
 )
 gtest_discover_tests(ssl_ee_feature_test)
+
+# --- Sharding strategy tests ---
+add_executable(sharding_strategy_test
+  unit/ShardingStrategyEETest.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Sharding/ShardingStrategyEE.cpp
+)
+target_include_directories(sharding_strategy_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(sharding_strategy_test
+  PRIVATE GTest::gtest_main GTest::gmock
+)
+gtest_discover_tests(sharding_strategy_test)
+
+# --- SmartGraph schema tests ---
+add_executable(smart_graph_schema_test
+  unit/SmartGraphSchemaTest.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/VocBase/SmartGraphSchema.cpp
+)
+target_include_directories(smart_graph_schema_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(smart_graph_schema_test
+  PRIVATE GTest::gtest_main GTest::gmock
+)
+gtest_discover_tests(smart_graph_schema_test)
+
+# --- ReadFromFollower tests ---
+add_executable(read_from_follower_test
+  unit/ReadFromFollowerTest.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Cluster/ReadFromFollower.cpp
+)
+target_include_directories(read_from_follower_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(read_from_follower_test
+  PRIVATE GTest::gtest_main GTest::gmock
+)
+gtest_discover_tests(read_from_follower_test)
+
+# --- Satellite distribution tests ---
+add_executable(satellite_distribution_test
+  unit/SatelliteDistributionTest.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Cluster/SatelliteDistribution.cpp
+)
+target_include_directories(satellite_distribution_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(satellite_distribution_test
+  PRIVATE GTest::gtest_main GTest::gmock
+)
+gtest_discover_tests(satellite_distribution_test)
+
+# --- Local traversal node tests ---
+add_executable(local_traversal_node_test
+  unit/LocalTraversalNodeTest.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Aql/LocalTraversalNode.cpp
+)
+target_include_directories(local_traversal_node_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(local_traversal_node_test
+  PRIVATE GTest::gtest_main GTest::gmock
+)
+gtest_discover_tests(local_traversal_node_test)
+
+# --- SmartGraph provider tests ---
+add_executable(smart_graph_provider_test
+  unit/SmartGraphProviderTest.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Graph/Providers/SmartGraphProvider.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Graph/Steps/SmartGraphStep.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Sharding/ShardingStrategyEE.cpp
+)
+target_include_directories(smart_graph_provider_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(smart_graph_provider_test
+  PRIVATE GTest::gtest_main GTest::gmock
+)
+gtest_discover_tests(smart_graph_provider_test)
