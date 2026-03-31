@@ -40,15 +40,15 @@ Requirements for full Enterprise parity. Each maps to roadmap phases.
 
 ### Data Masking
 
-- [ ] **MASK-01**: AttributeMasking applies field-level masking rules to query results
-- [ ] **MASK-02**: Masking rules configurable per collection and per user role
-- [ ] **MASK-03**: Built-in masking strategies (redact, hash, partial, randomize)
+- [x] **MASK-01**: AttributeMasking applies field-level masking rules to query results
+- [x] **MASK-02**: Masking rules configurable per collection and per user role
+- [x] **MASK-03**: Built-in masking strategies (redact, hash, partial, randomize)
 
 ### Enhanced SSL/TLS
 
-- [ ] **SSL-01**: SslServerFeatureEE extends base SSL with enterprise TLS options
-- [ ] **SSL-02**: Support for client certificate authentication (mTLS)
-- [ ] **SSL-03**: TLS version and cipher suite restrictions configurable
+- [x] **SSL-01**: SslServerFeatureEE extends base SSL with enterprise TLS options
+- [x] **SSL-02**: Support for client certificate authentication (mTLS)
+- [x] **SSL-03**: TLS version and cipher suite restrictions configurable
 
 ### SmartGraphs
 
@@ -164,12 +164,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AUTH-03 | Phase 2 | Complete |
 | AUTH-04 | Phase 2 | Complete |
 | AUTH-05 | Phase 2 | Complete |
-| MASK-01 | Phase 2 | Pending |
-| MASK-02 | Phase 2 | Pending |
-| MASK-03 | Phase 2 | Pending |
-| SSL-01 | Phase 2 | Pending |
-| SSL-02 | Phase 2 | Pending |
-| SSL-03 | Phase 2 | Pending |
+| MASK-01 | Phase 2 | Complete |
+| MASK-02 | Phase 2 | Complete |
+| MASK-03 | Phase 2 | Complete |
+| SSL-01 | Phase 2 | Complete |
+| SSL-02 | Phase 2 | Complete |
+| SSL-03 | Phase 2 | Complete |
 | SMART-01 | Phase 3 | Pending |
 | SMART-02 | Phase 3 | Pending |
 | SMART-03 | Phase 3 | Pending |

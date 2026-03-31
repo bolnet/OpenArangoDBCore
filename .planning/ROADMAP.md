@@ -13,7 +13,7 @@ OpenArangoDBCore implements all 19 ArangoDB Enterprise modules as an open-source
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation and ABI Baseline** - Namespace correctness, CMake integration, LicenseFeature, and CI with AddressSanitizer — everything downstream depends on this (completed 2026-03-31)
-- [ ] **Phase 2: Security Foundations** - Encryption at Rest, Audit Logging, LDAP Authentication, Data Masking, and Enhanced SSL/TLS
+- [x] **Phase 2: Security Foundations** - Encryption at Rest, Audit Logging, LDAP Authentication, Data Masking, and Enhanced SSL/TLS (completed 2026-03-31)
 - [ ] **Phase 3: Graph and Cluster** - SmartGraphs, Disjoint SmartGraphs, Satellite Collections, Shard-local Execution, and ReadFromFollower
 - [ ] **Phase 4: Search and Backup Operations** - MinHash similarity, TopK/WAND optimization, Hot Backup, Cloud Backup, and Parallel Index Building
 - [ ] **Phase 5: DC-to-DC Replication** - Asynchronous cross-datacenter replication with mTLS, idempotent replay, and arangosync integration
@@ -47,7 +47,7 @@ Plans:
   3. All 8 audit topics (authentication, authorization, collection, database, document, view, service, hotbackup) produce structured records in the configured file or syslog output without measurable request latency increase
   4. A dump via `arangodump` with masking rules active produces output where configured fields are redacted/hashed, not the original values
   5. ArangoDB accepts client certificates for mTLS and rejects connections using TLS versions or cipher suites below the configured minimum
-**Plans:** 4 plans
+**Plans:** 4/4 plans complete
 
 Plans:
 - [ ] 02-01-PLAN.md — Encryption at Rest (RocksDB EncryptionProvider AES-256-CTR, key management, EncryptionFeature)
@@ -98,7 +98,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation and ABI Baseline | 3/3 | Complete   | 2026-03-31 |
-| 2. Security Foundations | 0/4 | Planning complete | - |
+| 2. Security Foundations | 4/4 | Complete   | 2026-03-31 |
 | 3. Graph and Cluster | 0/TBD | Not started | - |
 | 4. Search and Backup Operations | 0/TBD | Not started | - |
 | 5. DC-to-DC Replication | 0/TBD | Not started | - |
