@@ -4,6 +4,9 @@ project(OpenArangoDBCore VERSION 0.1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# OpenSSL is required for AES-256-CTR encryption at rest
+find_package(OpenSSL REQUIRED)
+
 # This project is compiled as part of ArangoDB with -DUSE_ENTERPRISE=1
 # It provides the Enterprise/ directory symbols.
 # All sources must be under Enterprise/ (not the old arangod path).
@@ -14,6 +17,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_library(openarangodb_enterprise STATIC
   # Audit
   Enterprise/Audit/AuditFeature.cpp
+  Enterprise/Audit/AuditLogger.cpp
 
   # Encryption
   Enterprise/Encryption/EncryptionFeature.cpp
@@ -32,15 +36,18 @@ add_library(openarangodb_enterprise STATIC
   Enterprise/Aql/MinHashFunctions.cpp
 
   # Auth
+  Enterprise/Auth/LDAPConfig.cpp
   Enterprise/Auth/LDAPHandler.cpp
 
   # Maskings
   Enterprise/Maskings/AttributeMasking.cpp
+  Enterprise/Maskings/AttributeMaskingEE.cpp
 
   # IResearch
   Enterprise/IResearch/IResearchOptimizeTopK.cpp
 
   # RocksDB
+  Enterprise/RocksDBEngine/EncryptionProvider.cpp
   Enterprise/RocksDBEngine/RocksDBHotBackup.cpp
   Enterprise/RocksDBEngine/RocksDBBuilderIndexEE.cpp
   Enterprise/RocksDBEngine/RocksDBEncryptionUtils.cpp
@@ -63,11 +70,14 @@ add_library(openarangodb_enterprise STATIC
 )
 
 target_include_directories(openarangodb_enterprise PUBLIC
+  $<$<BOOL:${BUILD_TESTING}>:${CMAKE_CURRENT_SOURCE_DIR}/tests/mocks>
   ${CMAKE_CURRENT_SOURCE_DIR}   # so #include "Enterprise/..." resolves
   ${CMAKE_SOURCE_DIR}           # so ArangoDB internal headers resolve
 )
 
 target_compile_definitions(openarangodb_enterprise PUBLIC USE_ENTERPRISE=1)
+
+target_link_libraries(openarangodb_enterprise PUBLIC OpenSSL::Crypto)
 
 target_compile_options(openarangodb_enterprise PRIVATE
   -Wall
