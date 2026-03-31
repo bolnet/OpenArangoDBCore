@@ -17,10 +17,10 @@ Requirements for full Enterprise parity. Each maps to roadmap phases.
 
 ### Audit Logging
 
-- [ ] **AUDIT-01**: AuditFeature registers as ApplicationFeature with correct lifecycle hooks
-- [ ] **AUDIT-02**: Audit events captured for all 8 topics (authentication, authorization, collection, database, document, view, service, hotbackup)
-- [ ] **AUDIT-03**: Audit log output configurable (file, syslog)
-- [ ] **AUDIT-04**: Audit logging is non-blocking (does not degrade server performance)
+- [x] **AUDIT-01**: AuditFeature registers as ApplicationFeature with correct lifecycle hooks
+- [x] **AUDIT-02**: Audit events captured for all 8 topics (authentication, authorization, collection, database, document, view, service, hotbackup)
+- [x] **AUDIT-03**: Audit log output configurable (file, syslog)
+- [x] **AUDIT-04**: Audit logging is non-blocking (does not degrade server performance)
 
 ### Encryption at Rest
 
@@ -150,10 +150,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | FOUND-03 | Phase 1 | Complete |
 | FOUND-04 | Phase 1 | Complete |
 | FOUND-05 | Phase 1 | Complete |
-| AUDIT-01 | Phase 2 | Pending |
-| AUDIT-02 | Phase 2 | Pending |
-| AUDIT-03 | Phase 2 | Pending |
-| AUDIT-04 | Phase 2 | Pending |
+| AUDIT-01 | Phase 2 | Complete |
+| AUDIT-02 | Phase 2 | Complete |
+| AUDIT-03 | Phase 2 | Complete |
+| AUDIT-04 | Phase 2 | Complete |
 | ENCR-01 | Phase 2 | Pending |
 | ENCR-02 | Phase 2 | Pending |
 | ENCR-03 | Phase 2 | Pending |
