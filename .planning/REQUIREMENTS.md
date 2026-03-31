@@ -145,70 +145,70 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FOUND-01 | -- | Pending |
-| FOUND-02 | -- | Pending |
-| FOUND-03 | -- | Pending |
-| FOUND-04 | -- | Pending |
-| FOUND-05 | -- | Pending |
-| AUDIT-01 | -- | Pending |
-| AUDIT-02 | -- | Pending |
-| AUDIT-03 | -- | Pending |
-| AUDIT-04 | -- | Pending |
-| ENCR-01 | -- | Pending |
-| ENCR-02 | -- | Pending |
-| ENCR-03 | -- | Pending |
-| ENCR-04 | -- | Pending |
-| ENCR-05 | -- | Pending |
-| AUTH-01 | -- | Pending |
-| AUTH-02 | -- | Pending |
-| AUTH-03 | -- | Pending |
-| AUTH-04 | -- | Pending |
-| AUTH-05 | -- | Pending |
-| MASK-01 | -- | Pending |
-| MASK-02 | -- | Pending |
-| MASK-03 | -- | Pending |
-| SSL-01 | -- | Pending |
-| SSL-02 | -- | Pending |
-| SSL-03 | -- | Pending |
-| SMART-01 | -- | Pending |
-| SMART-02 | -- | Pending |
-| SMART-03 | -- | Pending |
-| SMART-04 | -- | Pending |
-| SMART-05 | -- | Pending |
-| SAT-01 | -- | Pending |
-| SAT-02 | -- | Pending |
-| SAT-03 | -- | Pending |
-| SHARD-01 | -- | Pending |
-| SHARD-02 | -- | Pending |
-| RFF-01 | -- | Pending |
-| RFF-02 | -- | Pending |
-| MHASH-01 | -- | Pending |
-| MHASH-02 | -- | Pending |
-| MHASH-03 | -- | Pending |
-| TOPK-01 | -- | Pending |
-| TOPK-02 | -- | Pending |
-| TOPK-03 | -- | Pending |
-| HBAK-01 | -- | Pending |
-| HBAK-02 | -- | Pending |
-| HBAK-03 | -- | Pending |
-| HBAK-04 | -- | Pending |
-| CBAK-01 | -- | Pending |
-| CBAK-02 | -- | Pending |
-| CBAK-03 | -- | Pending |
-| PIDX-01 | -- | Pending |
-| PIDX-02 | -- | Pending |
-| PIDX-03 | -- | Pending |
-| DC2DC-01 | -- | Pending |
-| DC2DC-02 | -- | Pending |
-| DC2DC-03 | -- | Pending |
-| DC2DC-04 | -- | Pending |
-| DC2DC-05 | -- | Pending |
+| FOUND-01 | Phase 1 | Pending |
+| FOUND-02 | Phase 1 | Pending |
+| FOUND-03 | Phase 1 | Pending |
+| FOUND-04 | Phase 1 | Pending |
+| FOUND-05 | Phase 1 | Pending |
+| AUDIT-01 | Phase 2 | Pending |
+| AUDIT-02 | Phase 2 | Pending |
+| AUDIT-03 | Phase 2 | Pending |
+| AUDIT-04 | Phase 2 | Pending |
+| ENCR-01 | Phase 2 | Pending |
+| ENCR-02 | Phase 2 | Pending |
+| ENCR-03 | Phase 2 | Pending |
+| ENCR-04 | Phase 2 | Pending |
+| ENCR-05 | Phase 2 | Pending |
+| AUTH-01 | Phase 2 | Pending |
+| AUTH-02 | Phase 2 | Pending |
+| AUTH-03 | Phase 2 | Pending |
+| AUTH-04 | Phase 2 | Pending |
+| AUTH-05 | Phase 2 | Pending |
+| MASK-01 | Phase 2 | Pending |
+| MASK-02 | Phase 2 | Pending |
+| MASK-03 | Phase 2 | Pending |
+| SSL-01 | Phase 2 | Pending |
+| SSL-02 | Phase 2 | Pending |
+| SSL-03 | Phase 2 | Pending |
+| SMART-01 | Phase 3 | Pending |
+| SMART-02 | Phase 3 | Pending |
+| SMART-03 | Phase 3 | Pending |
+| SMART-04 | Phase 3 | Pending |
+| SMART-05 | Phase 3 | Pending |
+| SAT-01 | Phase 3 | Pending |
+| SAT-02 | Phase 3 | Pending |
+| SAT-03 | Phase 3 | Pending |
+| SHARD-01 | Phase 3 | Pending |
+| SHARD-02 | Phase 3 | Pending |
+| RFF-01 | Phase 3 | Pending |
+| RFF-02 | Phase 3 | Pending |
+| MHASH-01 | Phase 4 | Pending |
+| MHASH-02 | Phase 4 | Pending |
+| MHASH-03 | Phase 4 | Pending |
+| TOPK-01 | Phase 4 | Pending |
+| TOPK-02 | Phase 4 | Pending |
+| TOPK-03 | Phase 4 | Pending |
+| HBAK-01 | Phase 4 | Pending |
+| HBAK-02 | Phase 4 | Pending |
+| HBAK-03 | Phase 4 | Pending |
+| HBAK-04 | Phase 4 | Pending |
+| CBAK-01 | Phase 4 | Pending |
+| CBAK-02 | Phase 4 | Pending |
+| CBAK-03 | Phase 4 | Pending |
+| PIDX-01 | Phase 4 | Pending |
+| PIDX-02 | Phase 4 | Pending |
+| PIDX-03 | Phase 4 | Pending |
+| DC2DC-01 | Phase 5 | Pending |
+| DC2DC-02 | Phase 5 | Pending |
+| DC2DC-03 | Phase 5 | Pending |
+| DC2DC-04 | Phase 5 | Pending |
+| DC2DC-05 | Phase 5 | Pending |
 
 **Coverage:**
 - v1.0 requirements: 53 total
-- Mapped to phases: 0
-- Unmapped: 53
+- Mapped to phases: 53
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-30*
-*Last updated: 2026-03-30 after initial definition*
+*Last updated: 2026-03-30 after roadmap creation — all 53 requirements mapped*
