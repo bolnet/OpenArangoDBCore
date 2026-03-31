@@ -24,11 +24,11 @@ Requirements for full Enterprise parity. Each maps to roadmap phases.
 
 ### Encryption at Rest
 
-- [ ] **ENCR-01**: EncryptionProvider implements RocksDB encryption interface (AES-256-CTR)
-- [ ] **ENCR-02**: Encryption key management supports keyfile and key rotation
-- [ ] **ENCR-03**: IV generation uses cryptographically secure random (RAND_bytes)
-- [ ] **ENCR-04**: Random-access read/write works correctly with counter-mode encryption
-- [ ] **ENCR-05**: EncryptionFeature registers as ApplicationFeature and hooks into RocksDB engine startup
+- [x] **ENCR-01**: EncryptionProvider implements RocksDB encryption interface (AES-256-CTR)
+- [x] **ENCR-02**: Encryption key management supports keyfile and key rotation
+- [x] **ENCR-03**: IV generation uses cryptographically secure random (RAND_bytes)
+- [x] **ENCR-04**: Random-access read/write works correctly with counter-mode encryption
+- [x] **ENCR-05**: EncryptionFeature registers as ApplicationFeature and hooks into RocksDB engine startup
 
 ### LDAP Authentication & External RBAC
 
@@ -154,11 +154,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AUDIT-02 | Phase 2 | Complete |
 | AUDIT-03 | Phase 2 | Complete |
 | AUDIT-04 | Phase 2 | Complete |
-| ENCR-01 | Phase 2 | Pending |
-| ENCR-02 | Phase 2 | Pending |
-| ENCR-03 | Phase 2 | Pending |
-| ENCR-04 | Phase 2 | Pending |
-| ENCR-05 | Phase 2 | Pending |
+| ENCR-01 | Phase 2 | Complete |
+| ENCR-02 | Phase 2 | Complete |
+| ENCR-03 | Phase 2 | Complete |
+| ENCR-04 | Phase 2 | Complete |
+| ENCR-05 | Phase 2 | Complete |
 | AUTH-01 | Phase 2 | Complete |
 | AUTH-02 | Phase 2 | Complete |
 | AUTH-03 | Phase 2 | Complete |
