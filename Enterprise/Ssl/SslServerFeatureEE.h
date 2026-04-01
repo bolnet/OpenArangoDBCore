@@ -26,7 +26,7 @@ class SslServerFeatureEE final : public SslServerFeature {
   // Must match the name of the feature it replaces.
   static constexpr std::string_view name() noexcept { return "SslServer"; }
 
-  explicit SslServerFeatureEE(application_features::ApplicationServer& server);
+  explicit SslServerFeatureEE(ArangodServer& server);
 
   // Override to add enterprise options: mTLS, min TLS version, cipher suites.
   // MUST call SslServerFeature::collectOptions() first (Pitfall 6).

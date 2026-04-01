@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <functional>
 #include <string>
 #include <unordered_map>
@@ -12,48 +13,40 @@ class ProgramOptions {
   ProgramOptions() = default;
   virtual ~ProgramOptions() = default;
 
-  // Stub: addOption for string vector (repeatable)
-  void addOption(std::string const& name,
-                 std::string const& /*description*/,
-                 std::vector<std::string>& /*target*/) {
-    _registeredOptions.push_back(name);
-  }
+  // addOption overloads for all types used by Enterprise features
+  void addOption(std::string const& name, std::string const& /*desc*/,
+                 std::string& /*target*/) { _opts.push_back(name); }
+  void addOption(std::string const& name, std::string const& /*desc*/,
+                 bool& /*target*/) { _opts.push_back(name); }
+  void addOption(std::string const& name, std::string const& /*desc*/,
+                 uint64_t& /*target*/) { _opts.push_back(name); }
+  void addOption(std::string const& name, std::string const& /*desc*/,
+                 int64_t& /*target*/) { _opts.push_back(name); }
+  void addOption(std::string const& name, std::string const& /*desc*/,
+                 uint32_t& /*target*/) { _opts.push_back(name); }
+  void addOption(std::string const& name, std::string const& /*desc*/,
+                 int& /*target*/) { _opts.push_back(name); }
+  void addOption(std::string const& name, std::string const& /*desc*/,
+                 double& /*target*/) { _opts.push_back(name); }
+  void addOption(std::string const& name, std::string const& /*desc*/,
+                 std::vector<std::string>& /*target*/) { _opts.push_back(name); }
 
-  // Stub: addOption for bool
-  void addOption(std::string const& name,
-                 std::string const& /*description*/,
-                 bool& /*target*/) {
-    _registeredOptions.push_back(name);
-  }
+  // Section management (no-op in mock)
+  void addSection(std::string const& /*name*/, std::string const& /*desc*/) {}
+  void addEnterpriseSection(std::string const& /*name*/,
+                            std::string const& /*desc*/) {}
 
-  // Stub: addOption for string
-  void addOption(std::string const& name,
-                 std::string const& /*description*/,
-                 std::string& /*target*/) {
-    _registeredOptions.push_back(name);
-  }
-
-  // Stub: addOption for uint64_t
-  void addOption(std::string const& name,
-                 std::string const& /*description*/,
-                 uint64_t& /*target*/) {
-    _registeredOptions.push_back(name);
-  }
-
-  // Test helper: check if an option was registered
+  // Test helpers
   bool hasOption(std::string const& name) const {
-    for (auto const& opt : _registeredOptions) {
+    for (auto const& opt : _opts) {
       if (opt == name) return true;
     }
     return false;
   }
-
-  std::vector<std::string> const& registeredOptions() const {
-    return _registeredOptions;
-  }
+  std::vector<std::string> const& registeredOptions() const { return _opts; }
 
  private:
-  std::vector<std::string> _registeredOptions;
+  std::vector<std::string> _opts;
 };
 
 }  // namespace arangodb::options

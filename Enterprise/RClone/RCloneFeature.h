@@ -15,12 +15,11 @@ namespace options {
 class ProgramOptions;
 }
 
-class RCloneFeature final
-    : public application_features::ApplicationFeature {
+class RCloneFeature final : public ArangodFeature {
  public:
   static constexpr std::string_view name() noexcept { return "RClone"; }
 
-  explicit RCloneFeature(application_features::ApplicationServer& server);
+  explicit RCloneFeature(ArangodServer& server);
 
   void collectOptions(std::shared_ptr<options::ProgramOptions>) override;
   void validateOptions(std::shared_ptr<options::ProgramOptions>) override;

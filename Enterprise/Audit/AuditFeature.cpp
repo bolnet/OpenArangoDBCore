@@ -45,9 +45,8 @@ std::string hostname() {
 
 }  // namespace
 
-AuditFeature::AuditFeature(
-    application_features::ApplicationServer& server)
-    : ApplicationFeature(server, *this) {}
+AuditFeature::AuditFeature(ArangodServer& server)
+    : ArangodFeature(server, *this) {}
 
 void AuditFeature::collectOptions(
     std::shared_ptr<options::ProgramOptions> options) {

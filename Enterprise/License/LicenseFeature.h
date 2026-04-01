@@ -11,12 +11,11 @@ namespace options {
 class ProgramOptions;
 }
 
-class LicenseFeature final
-    : public application_features::ApplicationFeature {
+class LicenseFeature final : public ArangodFeature {
  public:
   static constexpr std::string_view name() noexcept { return "License"; }
 
-  explicit LicenseFeature(application_features::ApplicationServer& server);
+  explicit LicenseFeature(ArangodServer& server);
 
   // RestLicenseHandler calls this.
   // Return false = open-source behavior (no super-user restriction).

@@ -12,8 +12,8 @@ static_assert(!std::is_abstract_v<arangodb::RCloneFeature>,
 
 namespace arangodb {
 
-RCloneFeature::RCloneFeature(application_features::ApplicationServer& server)
-    : ApplicationFeature(server, *this) {}
+RCloneFeature::RCloneFeature(ArangodServer& server)
+    : ArangodFeature(server, *this) {}
 
 void RCloneFeature::collectOptions(
     std::shared_ptr<options::ProgramOptions> options) {

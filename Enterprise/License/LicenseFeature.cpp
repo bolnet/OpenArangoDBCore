@@ -13,9 +13,8 @@ static_assert(!std::is_abstract_v<arangodb::LicenseFeature>,
 
 namespace arangodb {
 
-LicenseFeature::LicenseFeature(
-    application_features::ApplicationServer& server)
-    : ApplicationFeature(server, *this) {}
+LicenseFeature::LicenseFeature(ArangodServer& server)
+    : ArangodFeature(server, *this) {}
 
 void LicenseFeature::collectOptions(
     std::shared_ptr<options::ProgramOptions> /*opts*/) {}

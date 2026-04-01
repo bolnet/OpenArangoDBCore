@@ -23,13 +23,12 @@ class ProgramOptions;
 /// - Parses --rocksdb.encryption-keyfile and --rocksdb.encryption-keyfolder
 /// - Loads keys and creates the RocksDB EncryptionProvider in prepare()
 /// - Cleans up provider in unprepare()
-class EncryptionFeature final
-    : public application_features::ApplicationFeature {
+class EncryptionFeature final : public ArangodFeature {
  public:
   static constexpr std::string_view name() noexcept { return "Encryption"; }
 
-  explicit EncryptionFeature(application_features::ApplicationServer& server)
-      : ApplicationFeature(server, *this) {}
+  explicit EncryptionFeature(ArangodServer& server)
+      : ArangodFeature(server, *this) {}
 
   void collectOptions(std::shared_ptr<options::ProgramOptions> opts) override;
   void validateOptions(std::shared_ptr<options::ProgramOptions> opts) override;

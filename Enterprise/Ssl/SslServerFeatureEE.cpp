@@ -10,8 +10,7 @@ static_assert(!std::is_abstract_v<arangodb::SslServerFeatureEE>,
 
 namespace arangodb {
 
-SslServerFeatureEE::SslServerFeatureEE(
-    application_features::ApplicationServer& server)
+SslServerFeatureEE::SslServerFeatureEE(ArangodServer& server)
     : SslServerFeature(server) {}
 
 void SslServerFeatureEE::collectOptions(

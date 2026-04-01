@@ -28,16 +28,20 @@ struct Result {
   bool _ok = true;
 };
 
-// Stub SslContextList type (normally std::shared_ptr<std::vector<asio_ns::ssl::context>>)
-using SslContextList = std::shared_ptr<std::vector<int>>;  // placeholder
+// Stub SslContextList type
+using SslContextList = std::shared_ptr<std::vector<int>>;
 
-class SslServerFeature : public application_features::ApplicationFeature {
+class SslServerFeature : public ArangodFeature {
  public:
-  explicit SslServerFeature(application_features::ApplicationServer& server)
-      : ApplicationFeature(server, *this) {}
+  static constexpr std::string_view name() noexcept {
+    return "SslServer";
+  }
+
+  explicit SslServerFeature(ArangodServer& server)
+      : ArangodFeature(server, *this) {}
   virtual ~SslServerFeature() = default;
 
-  // These are final in the real class -- cannot be overridden by EE
+  // These are final in the real class
   void prepare() override final {}
   void unprepare() override final {}
 
@@ -51,7 +55,6 @@ class SslServerFeature : public application_features::ApplicationFeature {
     return Result::success();
   }
 
-  // Override points for options
   void collectOptions(std::shared_ptr<options::ProgramOptions> opts) override {
     _baseCollectCalled = true;
   }

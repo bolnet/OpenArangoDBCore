@@ -12,13 +12,12 @@ namespace arangodb {
 
 class RocksDBHotBackup;  // forward declaration
 
-class HotBackupFeature final
-    : public application_features::ApplicationFeature {
+class HotBackupFeature final : public ArangodFeature {
  public:
   static constexpr std::string_view name() noexcept { return "HotBackup"; }
 
-  explicit HotBackupFeature(application_features::ApplicationServer& server)
-      : ApplicationFeature(server, *this),
+  explicit HotBackupFeature(ArangodServer& server)
+      : ArangodFeature(server, *this),
         _enabled(true),
         _maxBackups(0) {}
 
