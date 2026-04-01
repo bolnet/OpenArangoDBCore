@@ -18,13 +18,13 @@ void EncryptionFeature::collectOptions(
   if (opts) {
     opts->addOption("--rocksdb.encryption-keyfile",
                     "path to the encryption keyfile (32-byte raw key)",
-                    _keyfilePath);
+                    new options::StringParameter(&_keyfilePath));
     opts->addOption("--rocksdb.encryption-keyfolder",
                     "path to folder with encryption keys for rotation",
-                    _keyfolderPath);
+                    new options::StringParameter(&_keyfolderPath));
     opts->addOption("--rocksdb.encryption-key-rotation",
                     "enable API-based key rotation",
-                    _keyRotationEnabled);
+                    new options::BooleanParameter(&_keyRotationEnabled));
   }
   _hasKeyfileOption = true;
   _hasKeyfolderOption = true;

@@ -29,15 +29,27 @@ OpenArangoDBCore v1.0 integration testing against ArangoDB v3.12.0 source tree.
 
 ## What Needs Work (v1.1)
 
-### API Surface Adaptation
+### API Surface Adaptation (Partially Complete)
 
-Our implementations were written against simplified mock headers in `tests/mocks/`. The real ArangoDB headers have more complex APIs:
+Mock headers in `tests/mocks/` have been progressively aligned with real ArangoDB v3.12.0 APIs:
 
-- **`ProgramOptions::addOption()`** — Real API has different overloads than our mock
-- **`ApplicationFeature` constructor** — Real base class uses CRTP pattern with `id<Impl>`
+**Completed:**
+- **`ApplicationFeature` constructor** — CRTP pattern with `id<Impl>`, ArangodFeature alias
+- **`ApplicationServer`** — Template `id<T>()`, ApplicationServerT<> template, ArangodServer alias
+- **`ProgramOptions::addOption()`** — All type overloads (string, bool, int64_t, uint64_t, uint32_t, int, double, vector<string>)
+- **`SslServerFeature`** — Virtual method interface, `prepare()`/`unprepare()` as `final`
+- **`Result`** — Full API: ErrorCode-based construction, `ok()`/`fail()`/`errorNumber()`/`errorMessage()`, `reset()` family
+- **`ErrorCode`** — Strong type wrapping int, standard error codes (TRI_ERROR_NO_ERROR, etc.)
+- **`VPackBuilder`** — Object/array building methods (`openObject`, `close`, `add` overloads)
+- **`rocksdb::Status`** — Extended with NotFound, Corruption, Busy, TimedOut, Aborted codes
+- **`rocksdb::EncryptionProvider`** — Added `GetMarker()` virtual method
+- **All 10 Enterprise features** — Updated to use ArangodFeature base class with static `name()`
+
+**Remaining:**
+- **`ArangodFeatures` type** — Forward declaration insufficient; real `ApplicationServer.h` needs the full `TypeList`-based definition from `RestServer/arangod.h`, which pulls in `frozen` and `function2` (FetchContent deps)
+- **`ProgramOptions` Parameter types** — Our code now uses the real `new StringParameter()` API, but integration mode needs the include path for real `ProgramOptions/Parameters.h` (not our mock)
 - **`environ` linkage** — Symbol conflict between our code and system headers on Linux
-
-These are straightforward fixes — each file needs its `#include` and API call sites updated to match the real ArangoDB headers. The logic remains the same.
+- **FetchContent dependencies** — `frozen/string.h` and `function2.hpp` are fetched during ArangoDB CMake configure and not on standard include paths; enterprise lib target needs proper CMake dependency on these targets
 
 ### V8 ARM64 Build
 

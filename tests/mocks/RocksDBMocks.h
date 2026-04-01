@@ -36,15 +36,38 @@ class Status {
   static Status IOError(std::string const& msg = "") {
     return Status(kIOError, msg);
   }
+  static Status NotFound(std::string const& msg = "") {
+    return Status(kNotFound, msg);
+  }
+  static Status Corruption(std::string const& msg = "") {
+    return Status(kCorruption, msg);
+  }
+  static Status Busy(std::string const& msg = "") {
+    return Status(kBusy, msg);
+  }
+  static Status TimedOut(std::string const& msg = "") {
+    return Status(kTimedOut, msg);
+  }
+  static Status Aborted(std::string const& msg = "") {
+    return Status(kAborted, msg);
+  }
 
   bool ok() const { return code_ == kOk; }
   bool IsNotSupported() const { return code_ == kNotSupported; }
   bool IsInvalidArgument() const { return code_ == kInvalidArgument; }
   bool IsIOError() const { return code_ == kIOError; }
+  bool IsNotFound() const { return code_ == kNotFound; }
+  bool IsCorruption() const { return code_ == kCorruption; }
+  bool IsBusy() const { return code_ == kBusy; }
+  bool IsTimedOut() const { return code_ == kTimedOut; }
+  bool IsAborted() const { return code_ == kAborted; }
   std::string ToString() const { return msg_; }
 
  private:
-  enum Code { kOk, kNotSupported, kInvalidArgument, kIOError };
+  enum Code {
+    kOk, kNotSupported, kInvalidArgument, kIOError,
+    kNotFound, kCorruption, kBusy, kTimedOut, kAborted
+  };
   Code code_;
   std::string msg_;
   Status(Code c, std::string msg = "") : code_(c), msg_(std::move(msg)) {}
@@ -97,6 +120,13 @@ class BlockAccessCipherStream {
 
   // Block size for the cipher (0 = stream cipher).
   virtual size_t BlockSize() { return 0; }
+
+  // Required pure virtuals from real RocksDB API
+  virtual void AllocateScratch(std::string& scratch) = 0;
+  virtual Status EncryptBlock(uint64_t blockIndex, char* data,
+                              char* scratch) = 0;
+  virtual Status DecryptBlock(uint64_t blockIndex, char* data,
+                              char* scratch) = 0;
 };
 
 // ---- EncryptionProvider ----
@@ -105,6 +135,9 @@ class EncryptionProvider : public Customizable {
   ~EncryptionProvider() override = default;
 
   char const* Name() const override { return "EncryptionProvider"; }
+
+  // Returns a marker string for the encryption provider.
+  virtual std::string GetMarker() const { return ""; }
 
   // Returns the length of the prefix that is stored at the beginning of
   // each encrypted file.  Typically the IV length.

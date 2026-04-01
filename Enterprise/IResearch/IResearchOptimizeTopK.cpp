@@ -49,9 +49,8 @@
 #include <string>
 #include <vector>
 
-// Include AQL mock types for pattern detection.
-// In the full ArangoDB build, these would be the real ExecutionNode types.
-#include "AqlMocks.h"
+// AQL type compatibility — mock types in standalone, real types in integration
+#include "Enterprise/IResearch/AqlCompat.h"
 
 namespace arangodb {
 namespace iresearch {

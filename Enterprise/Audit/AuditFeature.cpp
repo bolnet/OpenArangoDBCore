@@ -1,5 +1,7 @@
 #include "AuditFeature.h"
 
+#include "ProgramOptions/ProgramOptions.h"
+
 #include <chrono>
 #include <iomanip>
 #include <sstream>
@@ -53,7 +55,7 @@ void AuditFeature::collectOptions(
   options->addOption("--audit.output",
                      "audit log output destination(s), e.g. "
                      "file:///path/to/audit.log or syslog://local0",
-                     _outputSpecs);
+                     new options::VectorParameter(&_outputSpecs));
 }
 
 void AuditFeature::validateOptions(

@@ -4,7 +4,7 @@
 #include <string>
 #include <string_view>
 
-#include "ApplicationFeatures/ApplicationFeature.h"
+#include "Enterprise/Basics/EnterpriseCompat.h"
 
 // Forward declare the RocksDB-level provider
 namespace rocksdb {

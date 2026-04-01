@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <type_traits>
 
-#include "ApplicationFeatures/ApplicationServer.h"
+#include "ProgramOptions/ProgramOptions.h"
 
 static_assert(!std::is_abstract_v<arangodb::SslServerFeatureEE>,
               "SslServerFeatureEE must not be abstract");
@@ -22,15 +22,15 @@ void SslServerFeatureEE::collectOptions(
   // Enterprise-specific options
   opts->addOption("--ssl.require-client-cert",
                   "require client certificates for mTLS authentication",
-                  _requireClientCert);
+                  new options::BooleanParameter(&_requireClientCert));
 
   opts->addOption("--ssl.min-tls-version",
                   "minimum TLS version (1.2 or 1.3, default 1.2)",
-                  _minTlsVersion);
+                  new options::StringParameter(&_minTlsVersion));
 
   opts->addOption("--ssl.enterprise-cipher-suites",
                   "allowed cipher suites (colon-separated allowlist)",
-                  _allowedCipherSuites);
+                  new options::StringParameter(&_allowedCipherSuites));
 }
 
 void SslServerFeatureEE::validateOptions(

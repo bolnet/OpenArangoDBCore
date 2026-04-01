@@ -5,7 +5,8 @@
 #include <string>
 #include <string_view>
 
-#include "ApplicationFeatures/ApplicationFeature.h"
+#include "Enterprise/Basics/EnterpriseCompat.h"
+#include "ProgramOptions/ProgramOptions.h"
 #include "Enterprise/RocksDBEngine/RocksDBHotBackup.h"
 
 namespace arangodb {
@@ -25,12 +26,14 @@ class HotBackupFeature final : public ArangodFeature {
 
   void collectOptions(std::shared_ptr<options::ProgramOptions> opts) override {
     opts->addOption("--rocksdb.backup-path",
-                    "directory for hot backup storage", _backupPath);
+                    "directory for hot backup storage",
+                    new options::StringParameter(&_backupPath));
     opts->addOption("--hot-backup.enabled",
-                    "enable hot backup feature", _enabled);
+                    "enable hot backup feature",
+                    new options::BooleanParameter(&_enabled));
     opts->addOption("--hot-backup.max-backups",
                     "maximum number of backups to retain (0 = unlimited)",
-                    _maxBackups);
+                    new options::UInt64Parameter(&_maxBackups));
   }
 
   void validateOptions(std::shared_ptr<options::ProgramOptions>) override {

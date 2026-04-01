@@ -36,6 +36,21 @@ class AESCTRCipherStream final : public rocksdb::BlockAccessCipherStream {
 
   size_t BlockSize() override { return 0; }  // stream cipher
 
+  /// Required by real RocksDB BlockAccessCipherStream interface.
+  /// For CTR mode (BlockSize()==0), these are not called by RocksDB,
+  /// but must be implemented to satisfy the pure virtual contract.
+  void AllocateScratch(std::string& scratch) override {
+    scratch.clear();
+  }
+  rocksdb::Status EncryptBlock(uint64_t /*blockIndex*/, char* /*data*/,
+                               char* /*scratch*/) override {
+    return rocksdb::Status::NotSupported("CTR mode uses Encrypt() directly");
+  }
+  rocksdb::Status DecryptBlock(uint64_t /*blockIndex*/, char* /*data*/,
+                               char* /*scratch*/) override {
+    return rocksdb::Status::NotSupported("CTR mode uses Decrypt() directly");
+  }
+
  private:
   /// Perform CTR-mode XOR at arbitrary offset.
   rocksdb::Status ctrTransform(uint64_t fileOffset, char* data,

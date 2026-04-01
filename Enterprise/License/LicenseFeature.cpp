@@ -3,7 +3,7 @@
 #include <memory>
 #include <type_traits>
 
-#include "ApplicationFeatures/ApplicationServer.h"
+// ApplicationServer types provided via EnterpriseCompat.h (included by header)
 #include "ProgramOptions/ProgramOptions.h"
 
 // Verify the vtable is fully satisfied — no pure virtual methods remain.

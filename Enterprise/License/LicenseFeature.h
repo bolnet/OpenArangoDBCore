@@ -3,7 +3,7 @@
 #include <memory>
 #include <string_view>
 
-#include "ApplicationFeatures/ApplicationFeature.h"
+#include "Enterprise/Basics/EnterpriseCompat.h"
 
 namespace arangodb {
 

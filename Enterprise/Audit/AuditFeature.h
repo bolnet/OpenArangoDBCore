@@ -5,7 +5,7 @@
 #include <string_view>
 #include <vector>
 
-#include "ApplicationFeatures/ApplicationFeature.h"
+#include "Enterprise/Basics/EnterpriseCompat.h"
 #include "Enterprise/Audit/AuditLogger.h"
 
 namespace arangodb {

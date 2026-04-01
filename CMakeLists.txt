@@ -121,6 +121,9 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/arangod" AND NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_
     ${CMAKE_SOURCE_DIR}/3rdParty/s2geometry/src
     ${CMAKE_SOURCE_DIR}/3rdParty/boost
     ${CMAKE_SOURCE_DIR}/3rdParty/nghttp2/lib/includes
+    ${CMAKE_SOURCE_DIR}/3rdParty/frozen/include
+    ${CMAKE_SOURCE_DIR}/3rdParty/function2/include
+    ${CMAKE_SOURCE_DIR}/3rdParty/taocpp-json/include
   )
 else()
   set(ARANGODB_INTEGRATION_BUILD OFF)
@@ -128,12 +131,16 @@ else()
 endif()
 
 target_include_directories(openarangodb_enterprise PUBLIC
-  $<$<BOOL:${BUILD_TESTING}>:${CMAKE_CURRENT_SOURCE_DIR}/tests/mocks>
+  # Mock headers only for standalone builds (not when inside ArangoDB source tree)
+  $<$<AND:$<BOOL:${BUILD_TESTING}>,$<NOT:$<BOOL:${ARANGODB_INTEGRATION_BUILD}>>>:${CMAKE_CURRENT_SOURCE_DIR}/tests/mocks>
   ${CMAKE_CURRENT_SOURCE_DIR}   # so #include "Enterprise/..." resolves
   ${ARANGODB_INCLUDE_DIRS}      # ArangoDB internal headers (when integrated)
 )
 
 target_compile_definitions(openarangodb_enterprise PUBLIC USE_ENTERPRISE=1)
+if(ARANGODB_INTEGRATION_BUILD)
+  target_compile_definitions(openarangodb_enterprise PUBLIC ARANGODB_INTEGRATION_BUILD=1)
+endif()
 
 # When inside ArangoDB tree, wait for generated headers before compiling
 if(ARANGODB_INTEGRATION_BUILD AND TARGET errorfiles)
@@ -160,12 +167,15 @@ add_library(arango_rclone STATIC
 )
 
 target_include_directories(arango_rclone PUBLIC
-  $<$<BOOL:${BUILD_TESTING}>:${CMAKE_CURRENT_SOURCE_DIR}/tests/mocks>
+  $<$<AND:$<BOOL:${BUILD_TESTING}>,$<NOT:$<BOOL:${ARANGODB_INTEGRATION_BUILD}>>>:${CMAKE_CURRENT_SOURCE_DIR}/tests/mocks>
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${ARANGODB_INCLUDE_DIRS}
 )
 
 target_compile_definitions(arango_rclone PUBLIC USE_ENTERPRISE=1)
+if(ARANGODB_INTEGRATION_BUILD)
+  target_compile_definitions(arango_rclone PUBLIC ARANGODB_INTEGRATION_BUILD=1)
+endif()
 
 if(ARANGODB_INTEGRATION_BUILD AND TARGET errorfiles)
   add_dependencies(arango_rclone errorfiles)
