@@ -1,4 +1,5 @@
 #include "SequenceNumberGenerator.h"
+#include <mutex>
 
 namespace arangodb {
 

@@ -40,12 +40,16 @@ class SslServerFeatureEE final : public SslServerFeature {
   // Override to add enterprise validation (minimum TLS version enforcement).
   void verifySslOptions() override;
 
+#ifndef ARANGODB_INTEGRATION_BUILD
   // Override to configure mTLS (client certificate verification) and
   // cipher suite restrictions.
+  // Guarded: SslContextList is a mock type not available in integration mode.
   SslContextList createSslContexts() override;
 
   // Override to include enterprise TLS details in VPack dump.
+  // Guarded: Result::success() is a mock API not available in integration mode.
   Result dumpTLSData(VPackBuilder& builder) const override;
+#endif
 
   // Accessors for testing
   bool requireClientCert() const noexcept { return _requireClientCert; }

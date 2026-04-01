@@ -49,8 +49,12 @@
 #include <string>
 #include <vector>
 
-// AQL type compatibility — mock types in standalone, real types in integration
+// AQL type compatibility — mock types in standalone, real types in integration.
+// In integration mode, the real ArangoDB optimizer handles TopK pattern
+// detection, so we only include mock types for standalone builds.
+#ifndef ARANGODB_INTEGRATION_BUILD
 #include "Enterprise/IResearch/AqlCompat.h"
+#endif
 
 namespace arangodb {
 namespace iresearch {
@@ -194,24 +198,14 @@ std::unique_ptr<ScoredDocIterator> WandExecutionContext::wrapIterator(
   return std::make_unique<WandIterator>(std::move(base), thresholdManager);
 }
 
+// The following optimizer rule functions use mock AQL types (MockSortNode,
+// MockLimitNode, MockEnumerateViewNode, MockExecutionNode) which only exist
+// in standalone builds. In integration mode, the real ArangoDB optimizer
+// handles TopK pattern detection via arangod's OptimizerRules.
+#ifndef ARANGODB_INTEGRATION_BUILD
+
 ////////////////////////////////////////////////////////////////////////////////
 /// Optimizer rule: BM25 sort element detection
-///
-/// Checks whether a SortElement references a BM25 scorer by looking for
-/// the substring "bm25" (case-insensitive) in the attribute path.
-///
-/// In the full ArangoDB build, this would inspect the scorer function
-/// reference on the SortElement. For the standalone build, we use string
-/// matching on the attribute path as a reasonable proxy.
-///
-/// Examples that match:
-///   "BM25(doc)"        -> matches
-///   "bm25(doc, 1.2)"   -> matches
-///   "doc.BM25_score"   -> matches (contains "bm25")
-///
-/// Examples that don't match:
-///   "timestamp"        -> no match
-///   "TFIDF(doc)"       -> no match
 ////////////////////////////////////////////////////////////////////////////////
 
 bool isBM25SortElement(aql::SortElement const& element) {
@@ -222,40 +216,22 @@ bool isBM25SortElement(aql::SortElement const& element) {
   return lower.find("bm25") != std::string::npos;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-/// Internal helpers: Validate preconditions for WAND optimization.
-///
-/// These functions check whether individual nodes satisfy the preconditions
-/// for the WAND optimization:
-///   - validateSortNodeForWand: primary sort is BM25 descending
-///   - validateLimitNodeForWand: offset==0, limit>0
-////////////////////////////////////////////////////////////////////////////////
-
 namespace {
 
 bool validateSortNodeForWand(aql::MockSortNode const* sortNode) {
   if (sortNode == nullptr) {
     return false;
   }
-
   auto const& elements = sortNode->elements();
   if (elements.empty()) {
     return false;
   }
-
-  // Only the primary sort element matters for WAND applicability.
-  // Secondary sort elements (e.g., BM25 DESC, name ASC) do not affect
-  // whether WAND can be applied -- they only affect tie-breaking order
-  // which is handled after the top-k candidates are identified.
   if (!isBM25SortElement(elements[0])) {
     return false;
   }
-
-  // Must be descending: top-k wants the highest BM25 scores.
   if (elements[0].ascending) {
     return false;
   }
-
   return true;
 }
 
@@ -263,20 +239,12 @@ bool validateLimitNodeForWand(aql::MockLimitNode const* limitNode) {
   if (limitNode == nullptr) {
     return false;
   }
-
-  // WAND only works for pure top-k: offset must be zero.
-  // A query like LIMIT 5, 10 (skip 5, take 10) would require the
-  // heap to track offset + limit = 15 documents, which adds complexity.
-  // For v1, we reject any query with offset > 0.
   if (limitNode->offset() != 0) {
     return false;
   }
-
-  // Limit of zero makes no sense for top-k.
   if (limitNode->limit() == 0) {
     return false;
   }
-
   return true;
 }
 
@@ -284,26 +252,6 @@ bool validateLimitNodeForWand(aql::MockLimitNode const* limitNode) {
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Optimizer rule: pattern detection
-///
-/// Walks the flat list of execution nodes looking for LimitNode entries.
-/// For each LimitNode, checks the dependency chain:
-///   LimitNode -> SortNode(BM25 desc) -> EnumerateViewNode
-///
-/// If the pattern matches and the LimitNode has offset==0, the
-/// EnumerateViewNode is annotated with WAND parameters:
-///   _enableWand = true
-///   _wandHeapSize = limitNode->limit()
-///
-/// This annotation is later consumed at execution time by
-/// WandExecutionContext::wrapIterator() to insert a WandIterator
-/// around the IResearch posting list iterator.
-///
-/// The pattern detection is conservative: it only matches the exact
-/// three-node chain with no intervening nodes. A FILTER between
-/// the SortNode and EnumerateViewNode would break the pattern and
-/// prevent optimization. This is intentional -- a filter might change
-/// which documents are eligible, making WAND's maxScore-based pruning
-/// potentially unsafe.
 ////////////////////////////////////////////////////////////////////////////////
 
 size_t optimizeTopKPatterns(
@@ -311,24 +259,15 @@ size_t optimizeTopKPatterns(
   size_t optimized = 0;
 
   for (auto* node : nodes) {
-    // Step 1: Find LimitNode as the starting point (bottom-up traversal).
-    // We scan for LIMIT nodes because they are the terminal node in the
-    // pattern and are less common than other node types.
     if (node->getType() != aql::ExecutionNodeType::LIMIT) {
       continue;
     }
 
     auto* limitNode = static_cast<aql::MockLimitNode*>(node);
-
-    // Validate the LimitNode preconditions (offset==0, limit>0).
     if (!validateLimitNodeForWand(limitNode)) {
       continue;
     }
 
-    // Step 2: Check that the LimitNode's dependency is a SortNode.
-    // The dependency chain represents data flow: data flows from
-    // EnumerateViewNode -> SortNode -> LimitNode, so getFirstDep()
-    // on LimitNode should give us the SortNode.
     auto* dep = node->getFirstDep();
     if (dep == nullptr ||
         dep->getType() != aql::ExecutionNodeType::SORT) {
@@ -336,16 +275,10 @@ size_t optimizeTopKPatterns(
     }
 
     auto* sortNode = static_cast<aql::MockSortNode*>(dep);
-
-    // Validate the SortNode preconditions (BM25, descending).
     if (!validateSortNodeForWand(sortNode)) {
       continue;
     }
 
-    // Step 3: Check that the SortNode's dependency is an EnumerateViewNode.
-    // There must be no intervening nodes (e.g., FILTER, CALCULATION)
-    // between the SortNode and the EnumerateViewNode. Any such node would
-    // break the guarantee that the sort is operating directly on view output.
     auto* sortDep = dep->getFirstDep();
     if (sortDep == nullptr ||
         sortDep->getType() !=
@@ -354,11 +287,6 @@ size_t optimizeTopKPatterns(
     }
 
     auto* viewNode = static_cast<aql::MockEnumerateViewNode*>(sortDep);
-
-    // Step 4: Annotate the EnumerateViewNode with WAND parameters.
-    // This is the only mutation performed by the optimizer rule.
-    // No new node types are created; we only set annotation fields
-    // on the existing EnumerateViewNode.
     viewNode->setWandEnabled(true);
     viewNode->setWandHeapSize(limitNode->limit());
     ++optimized;
@@ -368,19 +296,18 @@ size_t optimizeTopKPatterns(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+/// Optimizer rule: registration (stub for standalone build)
+////////////////////////////////////////////////////////////////////////////////
+
+void registerOptimizeTopKRule() {
+  // Placeholder: actual registration requires the full ArangoDB
+  // OptimizerRulesFeature which is not available in standalone builds.
+}
+
+#endif  // !ARANGODB_INTEGRATION_BUILD
+
+////////////////////////////////////////////////////////////////////////////////
 /// Factory: Create a WandExecutionContext from optimizer annotations.
-///
-/// This is the bridge between plan-time annotations and execution-time
-/// WAND behavior. Called by the execution engine when setting up an
-/// EnumerateViewNode that has been annotated with WAND parameters.
-///
-/// If WAND is enabled, creates a ScoreThresholdManager with capacity
-/// equal to heapSize. If disabled, returns a context with no manager
-/// (wrapIterator will pass through).
-///
-/// @param enabled   Whether WAND was enabled by the optimizer rule.
-/// @param heapSize  The k value from the LimitNode (top-k).
-/// @return A fully initialized WandExecutionContext.
 ////////////////////////////////////////////////////////////////////////////////
 
 WandExecutionContext createWandContext(bool enabled, size_t heapSize) {
@@ -393,35 +320,6 @@ WandExecutionContext createWandContext(bool enabled, size_t heapSize) {
   }
 
   return ctx;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-/// Optimizer rule: registration
-///
-/// In the full ArangoDB build, this would call:
-///   OptimizerRulesFeature::registerRule(
-///     "optimize-top-k",
-///     optimizeTopKRule,
-///     OptimizerRule::Flags::CanBeDisabled |
-///         OptimizerRule::Flags::ClusterOnly_Never,
-///     OptimizerRule::Level::Pass6);
-///
-/// The rule is registered at Pass6 level, which runs after basic
-/// optimizations (like filter pushdown) but before execution plan
-/// finalization. This ensures that the execution plan structure is
-/// stable when pattern detection runs.
-///
-/// Stub for standalone build -- registration happens at ArangoDB
-/// integration time.
-////////////////////////////////////////////////////////////////////////////////
-
-void registerOptimizeTopKRule() {
-  // Placeholder: actual registration requires the full ArangoDB
-  // OptimizerRulesFeature which is not available in standalone builds.
-  // The rule function signature would be:
-  //   void optimizeTopKRule(Optimizer* optimizer,
-  //                         std::unique_ptr<ExecutionPlan> plan,
-  //                         OptimizerRule const& rule);
 }
 
 }  // namespace iresearch

@@ -1,5 +1,6 @@
 #include "SequenceNumberTracker.h"
 #include <algorithm>
+#include <mutex>
 
 namespace arangodb {
 

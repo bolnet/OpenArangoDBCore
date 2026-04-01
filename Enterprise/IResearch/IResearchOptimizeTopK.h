@@ -11,12 +11,16 @@
 #include <vector>
 
 // Forward declarations for AQL mock types used in optimizer rule.
+// In integration mode, the real ArangoDB optimizer handles TopK pattern
+// detection, so these mock-dependent declarations are not needed.
+#ifndef ARANGODB_INTEGRATION_BUILD
 namespace arangodb {
 namespace aql {
 struct SortElement;
 class MockExecutionNode;
 }  // namespace aql
 }  // namespace arangodb
+#endif
 
 namespace arangodb {
 namespace iresearch {
@@ -108,8 +112,13 @@ class WandIterator : public ScoredDocIterator {
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Optimizer rule: pattern detection
+///
+/// In integration mode, the real ArangoDB optimizer handles TopK pattern
+/// detection (arangod's OptimizerRules). These mock-type-dependent functions
+/// are only compiled in standalone mode for testing.
 ////////////////////////////////////////////////////////////////////////////////
 
+#ifndef ARANGODB_INTEGRATION_BUILD
 /// Detects EnumerateViewNode -> SortNode(BM25 desc) -> LimitNode(k) patterns
 /// and annotates the EnumerateViewNode with WAND parameters.
 /// Does not create new node types; modifies existing nodes in-place.
@@ -125,6 +134,7 @@ bool isBM25SortElement(aql::SortElement const& element);
 /// Registration function called from OptimizerRulesFeature::prepare()
 /// under #ifdef USE_ENTERPRISE guard.
 void registerOptimizeTopKRule();
+#endif  // !ARANGODB_INTEGRATION_BUILD
 
 // Forward declaration (full definition in IResearchDataStoreEE.hpp).
 struct WandExecutionContext;
