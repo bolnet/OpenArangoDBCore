@@ -46,10 +46,10 @@ Mock headers in `tests/mocks/` have been progressively aligned with real ArangoD
 - **All 10 Enterprise features** — Updated to use ArangodFeature base class with static `name()`
 
 **Remaining:**
-- **`ArangodFeatures` type** — Forward declaration insufficient; real `ApplicationServer.h` needs the full `TypeList`-based definition from `RestServer/arangod.h`, which pulls in `frozen` and `function2` (FetchContent deps)
-- **`ProgramOptions` Parameter types** — Our code now uses the real `new StringParameter()` API, but integration mode needs the include path for real `ProgramOptions/Parameters.h` (not our mock)
-- **`environ` linkage** — Symbol conflict between our code and system headers on Linux
-- **FetchContent dependencies** — `frozen/string.h` and `function2.hpp` are fetched during ArangoDB CMake configure and not on standard include paths; enterprise lib target needs proper CMake dependency on these targets
+- ~~**`ArangodFeatures` type**~~ **RESOLVED** — Research showed ArangodServer is a plain class (no TypeList template). Fixed `EnterpriseCompat.h` to include `RestServer/arangod.h` directly in integration mode.
+- ~~**`ProgramOptions` Parameter types**~~ **RESOLVED** — Mock aligned with real API: `struct` (not `class`), template `NumericParameter<T>`, template `VectorParameter<T>`, added missing types (`DiscreteValuesParameter`, `ObsoleteParameter`, etc.). Enterprise code updated to use `VectorParameter<StringParameter>`.
+- ~~**`environ` linkage**~~ **RESOLVED** — Already correct: standard POSIX `extern char** environ` on Linux, `_NSGetEnviron()` on macOS. No ODR violation with `extern` declarations.
+- ~~**FetchContent dependencies**~~ **RESOLVED** — `frozen` and `function2` are vendored under `3rdParty/` (not FetchContent). Fixed `function2` include path from `3rdParty/function2/include` to `3rdParty/function2` (no `/include` subfolder).
 
 ### V8 ARM64 Build
 

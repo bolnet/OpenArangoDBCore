@@ -5,21 +5,16 @@
 ///   ApplicationFeatures/ApplicationFeature.h provides ArangodFeature/ArangodServer
 ///
 /// In integration mode (real ArangoDB source tree):
-///   Forward-declare ArangodServer and provide the ArangodFeature alias
-///   without pulling in the heavyweight RestServer/arangod.h header.
+///   Include the real ApplicationFeature framework and RestServer/arangod.h
+///   which defines ArangodServer as a plain class (not a TypeList template).
 
 #ifdef ARANGODB_INTEGRATION_BUILD
-// Real ArangoDB source tree — use the real ApplicationFeature framework
+// Real ArangoDB source tree — ArangodServer is a plain class inheriting
+// ApplicationServer.  Feature registration is runtime (addFeature<T>()),
+// not compile-time TypeList.
 #include "ApplicationFeatures/ApplicationFeature.h"
 #include "ApplicationFeatures/ApplicationServer.h"
-
-// Forward declarations matching RestServer/arangod.h typedefs.
-// The full definitions are available when linking against the arangod target.
-namespace arangodb {
-struct ArangodFeatures;
-}
-using ArangodServer = arangodb::application_features::ApplicationServerT<arangodb::ArangodFeatures>;
-using ArangodFeature = arangodb::application_features::ApplicationFeatureT<ArangodServer>;
+#include "RestServer/arangod.h"
 
 #else
 // Standalone build — mocks provide ArangodFeature/ArangodServer

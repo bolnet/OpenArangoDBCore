@@ -55,7 +55,7 @@ void AuditFeature::collectOptions(
   options->addOption("--audit.output",
                      "audit log output destination(s), e.g. "
                      "file:///path/to/audit.log or syslog://local0",
-                     new options::VectorParameter(&_outputSpecs));
+                     new options::VectorParameter<options::StringParameter>(&_outputSpecs));
 }
 
 void AuditFeature::validateOptions(

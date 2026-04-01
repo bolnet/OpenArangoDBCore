@@ -122,7 +122,7 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/arangod" AND NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_
     ${CMAKE_SOURCE_DIR}/3rdParty/boost
     ${CMAKE_SOURCE_DIR}/3rdParty/nghttp2/lib/includes
     ${CMAKE_SOURCE_DIR}/3rdParty/frozen/include
-    ${CMAKE_SOURCE_DIR}/3rdParty/function2/include
+    ${CMAKE_SOURCE_DIR}/3rdParty/function2
     ${CMAKE_SOURCE_DIR}/3rdParty/taocpp-json/include
   )
 else()
