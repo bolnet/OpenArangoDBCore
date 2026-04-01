@@ -3,30 +3,14 @@
 /// Mirrors the virtual method interface of the real SslServerFeature
 /// without any OpenSSL or asio dependencies.
 #include "ApplicationFeatures/ApplicationFeature.h"
+#include "Basics/Result.h"
+#include "velocypack/Builder.h"
 
 #include <memory>
 #include <string>
 #include <vector>
 
 namespace arangodb {
-
-// Mock VPackBuilder definition
-namespace velocypack {
-class Builder {
- public:
-  Builder() = default;
-  ~Builder() = default;
-};
-}  // namespace velocypack
-using VPackBuilder = velocypack::Builder;
-
-// Stub Result type
-struct Result {
-  bool ok() const { return _ok; }
-  static Result success() { return Result{true}; }
-  static Result failure() { return Result{false}; }
-  bool _ok = true;
-};
 
 // Stub SslContextList type
 using SslContextList = std::shared_ptr<std::vector<int>>;

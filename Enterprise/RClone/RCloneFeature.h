@@ -5,7 +5,7 @@
 #include <string>
 #include <string_view>
 
-#include "ApplicationFeatures/ApplicationFeature.h"
+#include "Enterprise/Basics/EnterpriseCompat.h"
 #include "Enterprise/RClone/RCloneConfig.h"
 #include "Enterprise/RClone/RCloneProcess.h"
 

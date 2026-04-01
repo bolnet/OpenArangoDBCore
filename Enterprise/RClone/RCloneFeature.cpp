@@ -4,7 +4,7 @@
 #include <filesystem>
 #include <type_traits>
 
-#include "ApplicationFeatures/ApplicationServer.h"
+#include "ProgramOptions/ProgramOptions.h"
 #include "Enterprise/RClone/CloudProvider.h"
 
 static_assert(!std::is_abstract_v<arangodb::RCloneFeature>,
@@ -18,23 +18,32 @@ RCloneFeature::RCloneFeature(ArangodServer& server)
 void RCloneFeature::collectOptions(
     std::shared_ptr<options::ProgramOptions> options) {
   options->addOption("--rclone-executable",
-                     "path to rclone binary", _rcloneExecutable);
+                     "path to rclone binary",
+                     new options::StringParameter(&_rcloneExecutable));
   options->addOption("--rclone-provider",
-                     "cloud provider: s3, azure, gcs", _providerString);
+                     "cloud provider: s3, azure, gcs",
+                     new options::StringParameter(&_providerString));
   options->addOption("--rclone-endpoint",
-                     "provider endpoint URL", _endpoint);
+                     "provider endpoint URL",
+                     new options::StringParameter(&_endpoint));
   options->addOption("--rclone-bucket",
-                     "bucket or container name", _bucket);
+                     "bucket or container name",
+                     new options::StringParameter(&_bucket));
   options->addOption("--rclone-path-prefix",
-                     "sub-path within bucket", _pathPrefix);
+                     "sub-path within bucket",
+                     new options::StringParameter(&_pathPrefix));
   options->addOption("--rclone-region",
-                     "provider region", _region);
+                     "provider region",
+                     new options::StringParameter(&_region));
   options->addOption("--rclone-timeout",
-                     "IO timeout in seconds", _timeoutSeconds);
+                     "IO timeout in seconds",
+                     new options::UInt64Parameter(&_timeoutSeconds));
   options->addOption("--rclone-transfers",
-                     "parallel transfer count", _transfers);
+                     "parallel transfer count",
+                     new options::UInt64Parameter(&_transfers));
   options->addOption("--rclone-retries",
-                     "retry count on failure", _retries);
+                     "retry count on failure",
+                     new options::UInt64Parameter(&_retries));
 }
 
 void RCloneFeature::validateOptions(

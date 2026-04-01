@@ -5,6 +5,7 @@
 #include <string>
 #include <string_view>
 
+#include "Enterprise/Basics/EnterpriseCompat.h"
 #include "GeneralServer/SslServerFeature.h"
 
 namespace arangodb {
