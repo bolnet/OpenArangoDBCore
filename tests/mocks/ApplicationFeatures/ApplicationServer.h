@@ -1,40 +1,33 @@
 #pragma once
 #include <cstddef>
 #include <string_view>
+#include <typeindex>
 
 namespace arangodb::application_features {
 
 class ApplicationFeature;
 
+/// Mock ApplicationServer matching real ArangoDB v3.12.0 API.
+/// In real ArangoDB, ApplicationServer is a plain class (no template).
+/// Feature registration is runtime via addFeature<T>(), using
+/// std::type_index for feature identity.
 class ApplicationServer {
  public:
   ApplicationServer() = default;
   virtual ~ApplicationServer() = default;
 
-  // Mock: static feature ID registry (returns hash of type for uniqueness)
+  // Real API uses std::type_index, but for mock simplicity we use hash_code
   template<typename T>
   static constexpr size_t id() {
-    // Use a simple compile-time hash based on feature name
     return typeid(T).hash_code();
-  }
-};
-
-// Typed server template matching real ArangoDB pattern
-template<typename... Features>
-class ApplicationServerT : public ApplicationServer {
- public:
-  ApplicationServerT() = default;
-
-  template<typename T>
-  static constexpr size_t id() {
-    return ApplicationServer::id<T>();
   }
 };
 
 }  // namespace arangodb::application_features
 
 namespace arangodb {
-// ArangodServer type alias — in real ArangoDB this is
-// ApplicationServerT<ArangodFeaturesList> but for mocks we use a simple alias
+// ArangodServer — in real ArangoDB this is a plain class inheriting
+// ApplicationServer (defined in RestServer/arangod.h).
+// No TypeList, no template — feature registration is runtime.
 using ArangodServer = application_features::ApplicationServer;
 }  // namespace arangodb

@@ -1,7 +1,7 @@
 #pragma once
 /// Mock ProgramOptions for standalone builds.
-/// Supports both the real API pattern (Parameter* objects) and
-/// direct-reference convenience overloads for simpler test code.
+/// Matches real ArangoDB ProgramOptions/Parameters.h API surface.
+/// In integration mode, the real headers are used instead of this mock.
 
 #include <cstdint>
 #include <functional>
@@ -14,50 +14,78 @@ namespace arangodb::options {
 
 // ---------------------------------------------------------------------------
 // Mock Parameter hierarchy (matches real ArangoDB ProgramOptions/Parameters.h)
+// Real ArangoDB uses structs, not classes.
 // ---------------------------------------------------------------------------
-class Parameter {
- public:
+struct Parameter {
   virtual ~Parameter() = default;
+  virtual void flushValue() {}
+  virtual bool requiresValue() const { return true; }
+  virtual std::string name() const { return ""; }
+  virtual std::string valueString() const { return ""; }
+  virtual std::string set(std::string const&) { return ""; }
 };
 
-class StringParameter : public Parameter {
- public:
+struct StringParameter : public Parameter {
+  using ValueType = std::string;
   explicit StringParameter(std::string* /*target*/) {}
+  std::string name() const override { return "string"; }
 };
 
-class BooleanParameter : public Parameter {
- public:
+// BooleanParameter — real API is BooleanParameterBase<bool>
+struct BooleanParameter : public Parameter {
+  using ValueType = bool;
   explicit BooleanParameter(bool* /*target*/) {}
+  bool requiresValue() const override { return false; }
+  std::string name() const override { return "boolean"; }
 };
 
-class UInt64Parameter : public Parameter {
- public:
-  explicit UInt64Parameter(uint64_t* /*target*/) {}
+// NumericParameter<T> — template matching real API
+template<typename T>
+struct NumericParameter : public Parameter {
+  using ValueType = T;
+  explicit NumericParameter(T* /*target*/) {}
+  NumericParameter(T* /*target*/, T /*min*/, T /*max*/) {}
+  std::string name() const override { return "numeric"; }
 };
 
-class Int64Parameter : public Parameter {
- public:
-  explicit Int64Parameter(int64_t* /*target*/) {}
+using Int16Parameter = NumericParameter<std::int16_t>;
+using UInt16Parameter = NumericParameter<std::uint16_t>;
+using Int32Parameter = NumericParameter<std::int32_t>;
+using UInt32Parameter = NumericParameter<std::uint32_t>;
+using Int64Parameter = NumericParameter<std::int64_t>;
+using UInt64Parameter = NumericParameter<std::uint64_t>;
+using SizeTParameter = NumericParameter<std::size_t>;
+using DoubleParameter = NumericParameter<double>;
+
+// VectorParameter<T> — real API is template taking vector of T::ValueType
+template<typename T>
+struct VectorParameter : public Parameter {
+  using ValueType = typename T::ValueType;
+  explicit VectorParameter(std::vector<ValueType>* /*target*/) {}
+  std::string name() const override { return "vector"; }
 };
 
-class UInt32Parameter : public Parameter {
- public:
-  explicit UInt32Parameter(uint32_t* /*target*/) {}
+// DiscreteValuesParameter<T> — restricts to allowed set
+template<typename T>
+struct DiscreteValuesParameter : public T {
+  using ValueType = typename T::ValueType;
+  template<typename... Args>
+  DiscreteValuesParameter(Args&&... args) : T(std::forward<Args>(args)...) {}
 };
 
-class Int32Parameter : public Parameter {
- public:
-  explicit Int32Parameter(int* /*target*/) {}
+// DiscreteValuesVectorParameter<T>
+template<typename T>
+struct DiscreteValuesVectorParameter : public VectorParameter<T> {
+  using ValueType = typename T::ValueType;
+  template<typename... Args>
+  DiscreteValuesVectorParameter(Args&&... args)
+      : VectorParameter<T>(std::forward<Args>(args)...) {}
 };
 
-class DoubleParameter : public Parameter {
- public:
-  explicit DoubleParameter(double* /*target*/) {}
-};
-
-class VectorParameter : public Parameter {
- public:
-  explicit VectorParameter(std::vector<std::string>* /*target*/) {}
+// ObsoleteParameter — marks removed options
+struct ObsoleteParameter : public Parameter {
+  bool requiresValue() const override { return false; }
+  std::string name() const override { return "obsolete"; }
 };
 
 // Stub Option returned by addOption
