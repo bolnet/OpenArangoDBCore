@@ -45,19 +45,44 @@ add_library(openarangodb_enterprise STATIC
 
   # IResearch
   Enterprise/IResearch/IResearchOptimizeTopK.cpp
+  Enterprise/IResearch/IResearchAnalyzerFeature.cpp
 
   # RocksDB
   Enterprise/RocksDBEngine/EncryptionProvider.cpp
   Enterprise/RocksDBEngine/RocksDBHotBackup.cpp
+  Enterprise/RestHandler/RestHotBackupHandler.cpp
   Enterprise/RocksDBEngine/RocksDBBuilderIndexEE.cpp
+  Enterprise/RocksDBEngine/IndexBuilderThreadPool.cpp
+  Enterprise/RocksDBEngine/ChangelogBuffer.cpp
+  Enterprise/RocksDBEngine/KeySpacePartitioner.cpp
   Enterprise/RocksDBEngine/RocksDBEncryptionUtils.cpp
 
   # Cluster
   Enterprise/Cluster/SatelliteDistribution.cpp
   Enterprise/Cluster/ReadFromFollower.cpp
 
+  # Transaction
+  Enterprise/Transaction/IgnoreNoAccessAqlTransaction.cpp
+  Enterprise/Transaction/IgnoreNoAccessMethods.cpp
+
   # Replication
+  Enterprise/Replication/ReplicationApplier.cpp
+  Enterprise/Replication/SequenceNumberGenerator.cpp
+  Enterprise/Replication/SequenceNumberTracker.cpp
+  Enterprise/Replication/IdempotencyChecker.cpp
+  Enterprise/Replication/ReplicationCheckpoint.cpp
   Enterprise/Replication/DC2DCReplicator.cpp
+  Enterprise/Replication/ShardWALTailer.cpp
+  Enterprise/Replication/MessageBatcher.cpp
+  Enterprise/Replication/ReplicationLagMonitor.cpp
+  Enterprise/Replication/TlsConnectionConfig.cpp
+  Enterprise/Replication/ConnectionRetryPolicy.cpp
+  Enterprise/Replication/DirectMQProtocol.cpp
+  Enterprise/Replication/DirectMQClient.cpp
+  Enterprise/Replication/ReplicationStatusBuilder.cpp
+  Enterprise/Replication/ReplicationFeedStream.cpp
+  Enterprise/Replication/CheckpointReceiver.cpp
+  Enterprise/RestHandler/RestReplicationHandler.cpp
 
   # SSL
   Enterprise/Ssl/SslServerFeatureEE.cpp
@@ -92,9 +117,12 @@ target_compile_options(openarangodb_enterprise PRIVATE
 # ============================================================
 add_library(arango_rclone STATIC
   Enterprise/RClone/RCloneFeature.cpp
+  Enterprise/RClone/RCloneProcess.cpp
+  Enterprise/RClone/RCloneConfig.cpp
 )
 
 target_include_directories(arango_rclone PUBLIC
+  $<$<BOOL:${BUILD_TESTING}>:${CMAKE_CURRENT_SOURCE_DIR}/tests/mocks>
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_SOURCE_DIR}
 )
@@ -113,4 +141,12 @@ target_compile_options(arango_rclone PRIVATE
 option(BUILD_TESTING "Build the test suite" ON)
 if(BUILD_TESTING)
   add_subdirectory(tests)
+endif()
+
+# ============================================================
+# Benchmark suite (Google Benchmark via FetchContent)
+# ============================================================
+option(BUILD_BENCHMARKS "Build the performance benchmark suite" OFF)
+if(BUILD_BENCHMARKS)
+  add_subdirectory(benchmarks)
 endif()

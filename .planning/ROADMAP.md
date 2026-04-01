@@ -14,9 +14,9 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation and ABI Baseline** - Namespace correctness, CMake integration, LicenseFeature, and CI with AddressSanitizer — everything downstream depends on this (completed 2026-03-31)
 - [x] **Phase 2: Security Foundations** - Encryption at Rest, Audit Logging, LDAP Authentication, Data Masking, and Enhanced SSL/TLS (completed 2026-03-31)
-- [ ] **Phase 3: Graph and Cluster** - SmartGraphs, Disjoint SmartGraphs, Satellite Collections, Shard-local Execution, and ReadFromFollower
-- [ ] **Phase 4: Search and Backup Operations** - MinHash similarity, TopK/WAND optimization, Hot Backup, Cloud Backup, and Parallel Index Building
-- [ ] **Phase 5: DC-to-DC Replication** - Asynchronous cross-datacenter replication with mTLS, idempotent replay, and arangosync integration
+- [x] **Phase 3: Graph and Cluster** - SmartGraphs, Disjoint SmartGraphs, Satellite Collections, Shard-local Execution, and ReadFromFollower (completed 2026-03-31)
+- [x] **Phase 4: Search and Backup Operations** - MinHash similarity, TopK/WAND optimization, Hot Backup, Cloud Backup, and Parallel Index Building (completed 2026-04-01)
+- [x] **Phase 5: DC-to-DC Replication** - Asynchronous cross-datacenter replication with mTLS, idempotent replay, and arangosync integration (completed 2026-04-01)
 
 ## Phase Details
 
@@ -83,7 +83,14 @@ Plans:
   3. A hot backup snapshot can be created while the database is live, the server continues serving reads during backup, and the database restores correctly from the snapshot to the exact state at backup time
   4. A hot backup snapshot uploads successfully to a configured S3/Azure/GCS bucket via rclone subprocess; the upload can be configured with credentials and bucket path
   5. An index build on a large collection completes using multiple threads and read queries return correct results throughout the entire build duration
-**Plans**: TBD
+**Plans:** 5/5 plans written, 0/5 executed
+
+Plans:
+- [ ] 04-01-PLAN.md — MinHash AQL Functions + IResearch Analyzer (~25 tests)
+- [ ] 04-02-PLAN.md — TopK/WAND Optimizer Rule (~20 tests)
+- [ ] 04-03-PLAN.md — Hot Backup (RocksDB Checkpoint + REST API) (~25 tests)
+- [ ] 04-04-PLAN.md — Cloud Backup (RClone Integration) (~15 tests)
+- [ ] 04-05-PLAN.md — Parallel Index Building (RocksDBBuilderIndexEE) (~25 tests)
 
 ### Phase 5: DC-to-DC Replication
 **Goal**: ArangoDB instances in two separate datacenters maintain asynchronous replication with mTLS transport, sequence-numbered idempotent message delivery, and correct integration with the arangosync coordination process
@@ -94,7 +101,14 @@ Plans:
   2. Simulating a network partition (dropping replication traffic) and then restoring connectivity results in the target catching up to the source state with no data loss or duplicate documents
   3. All inter-datacenter replication traffic uses mTLS; a connection attempt with an invalid certificate is rejected
   4. The `DC2DCReplicator` integrates with the arangosync worker process lifecycle — replication starts, stops, and reports status correctly through the arangosync coordination protocol
-**Plans**: TBD
+**Plans:** 5/5 plans written, 0/5 executed
+
+Plans:
+- [ ] 05-01-PLAN.md — Sequence Numbers + Idempotency Protocol (~25 tests)
+- [ ] 05-02-PLAN.md — WAL Tailing + Message Generation (~20 tests)
+- [ ] 05-03-PLAN.md — DirectMQ Client + mTLS Transport (~20 tests)
+- [ ] 05-04-PLAN.md — REST API + arangosync Integration (~25 tests)
+- [ ] 05-05-PLAN.md — Transaction Bypass + Integration Tests (~20 tests)
 
 ## Progress
 
@@ -106,5 +120,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | 1. Foundation and ABI Baseline | 3/3 | Complete   | 2026-03-31 |
 | 2. Security Foundations | 4/4 | Complete   | 2026-03-31 |
 | 3. Graph and Cluster | 4/4 | Complete | 2026-03-31 |
-| 4. Search and Backup Operations | 0/TBD | Not started | - |
-| 5. DC-to-DC Replication | 0/TBD | Not started | - |
+| 4. Search and Backup Operations | 5/5 | Complete | 2026-04-01 |
+| 5. DC-to-DC Replication | 5/5 | Complete | 2026-04-01 |

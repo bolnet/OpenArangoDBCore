@@ -4,14 +4,14 @@ milestone: v1.0
 milestone_name: milestone
 status: executing
 stopped_at: Phase 3 complete, ready to start Phase 4
-last_updated: "2026-03-31T23:45:00.000Z"
-last_activity: 2026-03-31 — Completed Phase 3 execution (4 plans, 91 tests)
+last_updated: "2026-04-01T03:00:00.000Z"
+last_activity: 2026-04-01 — Phase 5 complete (5 plans, 214 tests). ALL PHASES COMPLETE. 565 total tests.
 progress:
   total_phases: 5
-  completed_phases: 3
-  total_plans: 11
-  completed_plans: 11
-  percent: 63
+  completed_phases: 5
+  total_plans: 21
+  completed_plans: 21
+  percent: 100
 ---
 
 # Project State
@@ -25,12 +25,12 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 
 ## Current Position
 
-Phase: 3 of 5 (Graph and Cluster) — COMPLETE
-Plan: 4 of 4 in Phase 3 complete
-Status: executing
-Last activity: 2026-03-31 — Phase 3 complete (91 tests passing)
+Phase: 5 of 5 (DC-to-DC Replication) — COMPLETE
+Plan: 5 of 5 in Phase 5 complete
+Status: COMPLETE
+Last activity: 2026-04-01 — All 5 phases complete (565 tests, 0 failures)
 
-Progress: [████░░░░░░] 42%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -91,6 +91,24 @@ Recent decisions affecting current work:
 - [Phase 03]: ReadFromFollower uses atomic round-robin counter for thread-safe replica distribution
 - [Phase 03]: SmartGraphProvider is template-based (duck-typed), not virtual inheritance — matches ArangoDB's pattern
 - [Phase 03]: VirtualClusterSmartEdgeCollection wraps _local, _from, _to sub-collections for smart edge routing
+- [Phase 04]: MinHash uses FNV-1a base hash + Mersenne prime (2^61-1) modular arithmetic with __uint128_t for overflow safety
+- [Phase 04]: MinHashAnalyzer emits slot-prefixed tokens for IResearch indexing (separate from AQL functions)
+- [Phase 04]: TopK/WAND annotates existing EnumerateViewNode with _enableWand=true — no new ExecutionNode types
+- [Phase 04]: ScoreThresholdManager uses min-heap with strict less-than comparison for exact (not approximate) top-k
+- [Phase 04]: Hot Backup uses RocksDB Checkpoint API with global write lock RAII wrapper for WAL-consistent snapshots
+- [Phase 04]: BackupManifest serializes to JSON with timestamp, version, collections, backup ID
+- [Phase 04]: RClone uses posix_spawn() subprocess execution with credential injection via environment variables (never CLI args)
+- [Phase 04]: Parallel index build uses KeySpacePartitioner + per-thread snapshot-isolated iterators + ChangelogBuffer for background mode
+- [Phase 04]: Index build state machine: Idle → Building → ApplyingChangelog → Swapping → Complete/Failed
+- [Phase 05]: DirectMQMessage uses per-shard monotonic uint64 sequence numbers for idempotent replay
+- [Phase 05]: SequenceNumberGenerator uses shared_ptr-wrapped atomics with reader-writer lock for per-shard counters
+- [Phase 05]: IdempotencyChecker returns Accept/Reject/OutOfOrder for three-way message validation
+- [Phase 05]: ReplicationCheckpoint uses atomic write-then-rename for crash-safe JSON persistence
+- [Phase 05]: DirectMQ wire protocol uses 4-byte big-endian length-prefix framing, 64MB max payload
+- [Phase 05]: DirectMQClient requires mTLS (rejects plaintext from first byte)
+- [Phase 05]: ReplicationApplier handles out-of-order buffering with gap-fill and drain
+- [Phase 05]: IgnoreNoAccessAqlTransaction bypasses all access checks for replication writes
+- [Phase 05]: REST API uses templates with .ipp implementations for mock injection without virtual dispatch
 
 ### Pending Todos
 
@@ -106,6 +124,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-31T23:45:00Z
-Stopped at: Phase 3 complete — start Phase 4 research next
+Last session: 2026-04-01T03:00:00Z
+Stopped at: ALL PHASES COMPLETE — v1.0 milestone achieved
 Resume file: None

@@ -40,7 +40,7 @@ target_include_directories(link_symbol_test
     ${CMAKE_SOURCE_DIR}
 )
 target_link_libraries(link_symbol_test
-  PRIVATE openarangodb_enterprise GTest::gtest_main
+  PRIVATE openarangodb_enterprise arango_rclone GTest::gtest_main
 )
 gtest_discover_tests(link_symbol_test)
 
@@ -248,3 +248,490 @@ target_link_libraries(smart_graph_provider_test
   PRIVATE GTest::gtest_main GTest::gmock
 )
 gtest_discover_tests(smart_graph_provider_test)
+
+# --- IResearch TopK/WAND optimizer tests ---
+add_executable(iresearch_topk_test
+  unit/IResearchOptimizeTopKTest.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/IResearch/IResearchOptimizeTopK.cpp
+)
+target_include_directories(iresearch_topk_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(iresearch_topk_test
+  PRIVATE GTest::gtest_main GTest::gmock
+)
+gtest_discover_tests(iresearch_topk_test)
+
+# --- MinHash AQL function tests ---
+add_executable(minhash_functions_test
+  unit/MinHashFunctionsTest.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Aql/MinHashFunctions.cpp
+)
+target_include_directories(minhash_functions_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(minhash_functions_test
+  PRIVATE GTest::gtest_main GTest::gmock
+)
+gtest_discover_tests(minhash_functions_test)
+
+# --- IResearch MinHash analyzer tests ---
+add_executable(iresearch_minhash_analyzer_test
+  unit/IResearchMinHashAnalyzerTest.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/IResearch/IResearchAnalyzerFeature.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Aql/MinHashFunctions.cpp
+)
+target_include_directories(iresearch_minhash_analyzer_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(iresearch_minhash_analyzer_test
+  PRIVATE GTest::gtest_main GTest::gmock
+)
+gtest_discover_tests(iresearch_minhash_analyzer_test)
+
+# --- KeySpacePartitioner tests ---
+add_executable(key_space_partitioner_test
+  unit/KeySpacePartitionerTest.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/RocksDBEngine/KeySpacePartitioner.cpp
+)
+target_include_directories(key_space_partitioner_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(key_space_partitioner_test
+  PRIVATE GTest::gtest_main GTest::gmock
+)
+gtest_discover_tests(key_space_partitioner_test)
+
+# --- ChangelogBuffer tests ---
+add_executable(changelog_buffer_test
+  unit/ChangelogBufferTest.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/RocksDBEngine/ChangelogBuffer.cpp
+)
+target_include_directories(changelog_buffer_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(changelog_buffer_test
+  PRIVATE GTest::gtest_main GTest::gmock
+)
+gtest_discover_tests(changelog_buffer_test)
+
+# --- IndexBuilderThreadPool tests ---
+add_executable(index_builder_thread_pool_test
+  unit/IndexBuilderThreadPoolTest.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/RocksDBEngine/IndexBuilderThreadPool.cpp
+)
+target_include_directories(index_builder_thread_pool_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(index_builder_thread_pool_test
+  PRIVATE GTest::gtest_main GTest::gmock
+)
+gtest_discover_tests(index_builder_thread_pool_test)
+
+# --- RocksDBBuilderIndexEE tests ---
+add_executable(rocksdb_builder_index_ee_test
+  unit/RocksDBBuilderIndexEETest.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/RocksDBEngine/RocksDBBuilderIndexEE.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/RocksDBEngine/IndexBuilderThreadPool.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/RocksDBEngine/ChangelogBuffer.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/RocksDBEngine/KeySpacePartitioner.cpp
+)
+target_include_directories(rocksdb_builder_index_ee_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(rocksdb_builder_index_ee_test
+  PRIVATE GTest::gtest_main GTest::gmock
+)
+gtest_discover_tests(rocksdb_builder_index_ee_test)
+
+# --- Hot backup engine tests ---
+add_executable(hot_backup_test
+  unit/RocksDBHotBackupTest.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/RocksDBEngine/RocksDBHotBackup.cpp
+)
+target_include_directories(hot_backup_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(hot_backup_test
+  PRIVATE GTest::gtest_main GTest::gmock
+)
+gtest_discover_tests(hot_backup_test)
+
+# --- Hot backup REST handler tests ---
+add_executable(hot_backup_handler_test
+  unit/RestHotBackupHandlerTest.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/RestHandler/RestHotBackupHandler.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/RocksDBEngine/RocksDBHotBackup.cpp
+)
+target_include_directories(hot_backup_handler_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(hot_backup_handler_test
+  PRIVATE GTest::gtest_main GTest::gmock
+)
+gtest_discover_tests(hot_backup_handler_test)
+
+# --- RClone process tests ---
+add_executable(rclone_process_test
+  unit/RCloneProcessTest.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/RClone/RCloneProcess.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/RClone/RCloneConfig.cpp
+)
+target_include_directories(rclone_process_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(rclone_process_test
+  PRIVATE GTest::gtest_main GTest::gmock
+)
+gtest_discover_tests(rclone_process_test)
+
+# --- RClone feature tests ---
+add_executable(rclone_feature_test
+  unit/RCloneFeatureTest.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/RClone/RCloneFeature.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/RClone/RCloneProcess.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/RClone/RCloneConfig.cpp
+)
+target_include_directories(rclone_feature_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(rclone_feature_test
+  PRIVATE GTest::gtest_main GTest::gmock
+)
+gtest_discover_tests(rclone_feature_test)
+
+# --- SequenceNumberGenerator tests ---
+add_executable(sequence_number_generator_test
+  unit/SequenceNumberGeneratorTest.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Replication/SequenceNumberGenerator.cpp
+)
+target_include_directories(sequence_number_generator_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(sequence_number_generator_test
+  PRIVATE GTest::gtest_main GTest::gmock
+)
+gtest_discover_tests(sequence_number_generator_test)
+
+# --- SequenceNumberTracker tests ---
+add_executable(sequence_number_tracker_test
+  unit/SequenceNumberTrackerTest.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Replication/SequenceNumberTracker.cpp
+)
+target_include_directories(sequence_number_tracker_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(sequence_number_tracker_test
+  PRIVATE GTest::gtest_main GTest::gmock
+)
+gtest_discover_tests(sequence_number_tracker_test)
+
+# --- IdempotencyChecker tests ---
+add_executable(idempotency_checker_test
+  unit/IdempotencyCheckerTest.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Replication/IdempotencyChecker.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Replication/SequenceNumberTracker.cpp
+)
+target_include_directories(idempotency_checker_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(idempotency_checker_test
+  PRIVATE GTest::gtest_main GTest::gmock
+)
+gtest_discover_tests(idempotency_checker_test)
+
+# --- ReplicationCheckpoint tests ---
+add_executable(replication_checkpoint_test
+  unit/ReplicationCheckpointTest.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Replication/ReplicationCheckpoint.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Replication/SequenceNumberTracker.cpp
+)
+target_include_directories(replication_checkpoint_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(replication_checkpoint_test
+  PRIVATE GTest::gtest_main GTest::gmock
+)
+gtest_discover_tests(replication_checkpoint_test)
+
+# --- DC2DCReplicator feature tests ---
+add_executable(dc2dc_replicator_feature_test
+  unit/DC2DCReplicatorFeatureTest.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Replication/DC2DCReplicator.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Replication/SequenceNumberGenerator.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Replication/SequenceNumberTracker.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Replication/IdempotencyChecker.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Replication/ReplicationCheckpoint.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Replication/ShardWALTailer.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Replication/MessageBatcher.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Replication/ReplicationLagMonitor.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Sharding/ShardingStrategyEE.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Cluster/SatelliteDistribution.cpp
+)
+target_include_directories(dc2dc_replicator_feature_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(dc2dc_replicator_feature_test
+  PRIVATE GTest::gtest_main GTest::gmock
+)
+gtest_discover_tests(dc2dc_replicator_feature_test)
+
+# --- TlsConnectionConfig tests ---
+add_executable(tls_connection_config_test
+  unit/TlsConnectionConfigTest.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Replication/TlsConnectionConfig.cpp
+)
+target_include_directories(tls_connection_config_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(tls_connection_config_test
+  PRIVATE GTest::gtest_main GTest::gmock
+)
+gtest_discover_tests(tls_connection_config_test)
+
+# --- DirectMQProtocol tests ---
+add_executable(directmq_protocol_test
+  unit/DirectMQProtocolTest.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Replication/DirectMQProtocol.cpp
+)
+target_include_directories(directmq_protocol_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(directmq_protocol_test
+  PRIVATE GTest::gtest_main GTest::gmock
+)
+gtest_discover_tests(directmq_protocol_test)
+
+# --- DirectMQClient + ConnectionRetryPolicy tests ---
+add_executable(directmq_client_test
+  unit/DirectMQClientTest.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Replication/DirectMQClient.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Replication/TlsConnectionConfig.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Replication/ConnectionRetryPolicy.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Replication/DirectMQProtocol.cpp
+)
+target_include_directories(directmq_client_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(directmq_client_test
+  PRIVATE GTest::gtest_main GTest::gmock OpenSSL::SSL OpenSSL::Crypto
+)
+gtest_discover_tests(directmq_client_test)
+
+# --- ShardWALTailer tests ---
+add_executable(shard_wal_tailer_test
+  unit/ShardWALTailerTest.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Replication/ShardWALTailer.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Sharding/ShardingStrategyEE.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Cluster/SatelliteDistribution.cpp
+)
+target_include_directories(shard_wal_tailer_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(shard_wal_tailer_test
+  PRIVATE GTest::gtest_main GTest::gmock
+)
+gtest_discover_tests(shard_wal_tailer_test)
+
+# --- MessageBatcher tests ---
+add_executable(message_batcher_test
+  unit/MessageBatcherTest.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Replication/MessageBatcher.cpp
+)
+target_include_directories(message_batcher_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(message_batcher_test
+  PRIVATE GTest::gtest_main GTest::gmock
+)
+gtest_discover_tests(message_batcher_test)
+
+# --- ReplicationLagMonitor tests ---
+add_executable(replication_lag_monitor_test
+  unit/ReplicationLagMonitorTest.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Replication/ReplicationLagMonitor.cpp
+)
+target_include_directories(replication_lag_monitor_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(replication_lag_monitor_test
+  PRIVATE GTest::gtest_main GTest::gmock
+)
+gtest_discover_tests(replication_lag_monitor_test)
+
+# --- RestReplicationHandler tests ---
+add_executable(rest_replication_handler_test
+  unit/RestReplicationHandlerTest.cpp
+)
+target_include_directories(rest_replication_handler_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(rest_replication_handler_test
+  PRIVATE GTest::gtest_main GTest::gmock
+)
+gtest_discover_tests(rest_replication_handler_test)
+
+# --- ReplicationStatusBuilder tests ---
+add_executable(replication_status_builder_test
+  unit/ReplicationStatusBuilderTest.cpp
+)
+target_include_directories(replication_status_builder_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(replication_status_builder_test
+  PRIVATE GTest::gtest_main GTest::gmock
+)
+gtest_discover_tests(replication_status_builder_test)
+
+# --- ReplicationFeedStream tests ---
+add_executable(replication_feed_stream_test
+  unit/ReplicationFeedStreamTest.cpp
+)
+target_include_directories(replication_feed_stream_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(replication_feed_stream_test
+  PRIVATE GTest::gtest_main GTest::gmock
+)
+gtest_discover_tests(replication_feed_stream_test)
+
+# --- CheckpointReceiver tests ---
+add_executable(checkpoint_receiver_test
+  unit/CheckpointReceiverTest.cpp
+)
+target_include_directories(checkpoint_receiver_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(checkpoint_receiver_test
+  PRIVATE GTest::gtest_main GTest::gmock
+)
+gtest_discover_tests(checkpoint_receiver_test)
+
+# --- IgnoreNoAccessTransaction tests ---
+add_executable(ignore_no_access_transaction_test
+  unit/IgnoreNoAccessTransactionTest.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Transaction/IgnoreNoAccessAqlTransaction.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Transaction/IgnoreNoAccessMethods.cpp
+)
+target_include_directories(ignore_no_access_transaction_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(ignore_no_access_transaction_test
+  PRIVATE GTest::gtest_main GTest::gmock
+)
+gtest_discover_tests(ignore_no_access_transaction_test)
+
+# --- ReplicationApplier tests ---
+add_executable(replication_applier_test
+  unit/ReplicationApplierTest.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Replication/ReplicationApplier.cpp
+)
+target_include_directories(replication_applier_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(replication_applier_test
+  PRIVATE GTest::gtest_main GTest::gmock
+)
+gtest_discover_tests(replication_applier_test)
+
+# --- DC2DC Integration tests ---
+add_executable(dc2dc_integration_test
+  unit/DC2DCIntegrationTest.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Replication/ReplicationApplier.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Transaction/IgnoreNoAccessAqlTransaction.cpp
+  ${CMAKE_SOURCE_DIR}/Enterprise/Transaction/IgnoreNoAccessMethods.cpp
+)
+target_include_directories(dc2dc_integration_test
+  BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+target_link_libraries(dc2dc_integration_test
+  PRIVATE GTest::gtest_main GTest::gmock
+)
+gtest_discover_tests(dc2dc_integration_test)
