@@ -3,7 +3,12 @@
 #include <stdexcept>
 #include <type_traits>
 
+#ifdef ARANGODB_INTEGRATION_BUILD
 #include "ProgramOptions/ProgramOptions.h"
+#include "ProgramOptions/Parameters.h"
+#else
+#include "ProgramOptions/ProgramOptions.h"
+#endif
 
 static_assert(!std::is_abstract_v<arangodb::SslServerFeatureEE>,
               "SslServerFeatureEE must not be abstract");

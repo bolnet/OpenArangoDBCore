@@ -4,7 +4,12 @@
 #include <filesystem>
 #include <type_traits>
 
+#ifdef ARANGODB_INTEGRATION_BUILD
 #include "ProgramOptions/ProgramOptions.h"
+#include "ProgramOptions/Parameters.h"
+#else
+#include "ProgramOptions/ProgramOptions.h"
+#endif
 #include "Enterprise/RClone/CloudProvider.h"
 
 static_assert(!std::is_abstract_v<arangodb::RCloneFeature>,

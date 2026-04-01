@@ -4,7 +4,12 @@
 #include <type_traits>
 
 // ApplicationServer types provided via EnterpriseCompat.h (included by header)
+#ifdef ARANGODB_INTEGRATION_BUILD
 #include "ProgramOptions/ProgramOptions.h"
+#include "ProgramOptions/Parameters.h"
+#else
+#include "ProgramOptions/ProgramOptions.h"
+#endif
 
 // Verify the vtable is fully satisfied — no pure virtual methods remain.
 static_assert(!std::is_abstract_v<arangodb::LicenseFeature>,
