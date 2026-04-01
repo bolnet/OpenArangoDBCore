@@ -1,33 +1,24 @@
-name: CI
+name: Sanitizers (ASan + UBSan)
 
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
 
 concurrency:
-  group: ci-${{ github.ref }}
+  group: sanitizers-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  build-and-test:
-    name: Build & Test (${{ matrix.os }}, ${{ matrix.compiler }})
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - os: ubuntu-22.04
-            compiler: gcc-12
-            cc: gcc-12
-            cxx: g++-12
-            pkg: gcc-12 g++-12
-          - os: ubuntu-24.04
-            compiler: gcc-14
-            cc: gcc-14
-            cxx: g++-14
-            pkg: gcc-14 g++-14
+  asan-ubsan:
+    name: ASan + UBSan (Ubuntu 24.04, GCC 14)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+
+    env:
+      CC: gcc-14
+      CXX: g++-14
+      ASAN_OPTIONS: "detect_odr_violation=2:detect_leaks=1:halt_on_error=1"
+      UBSAN_OPTIONS: "print_stacktrace=1:halt_on_error=1"
 
     steps:
       - name: Checkout
@@ -39,31 +30,30 @@ jobs:
           sudo apt-get install -y --no-install-recommends \
             cmake ninja-build \
             libssl-dev libldap-dev \
-            ${{ matrix.pkg }}
+            gcc-14 g++-14
 
       - name: Cache build directory
         uses: actions/cache@v4
         with:
           path: |
             build/_deps
-          key: cmake-deps-${{ matrix.os }}-${{ matrix.compiler }}-${{ hashFiles('tests/CMakeLists.txt') }}
+          key: cmake-deps-sanitizers-${{ hashFiles('tests/CMakeLists.txt') }}
           restore-keys: |
-            cmake-deps-${{ matrix.os }}-${{ matrix.compiler }}-
+            cmake-deps-sanitizers-
 
-      - name: Configure
-        env:
-          CC: ${{ matrix.cc }}
-          CXX: ${{ matrix.cxx }}
+      - name: Configure (Debug + ASan + UBSan)
         run: |
           cmake -S . -B build \
-            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_CXX_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer -fno-sanitize-recover=all" \
+            -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address,undefined" \
             -DBUILD_TESTING=ON \
             -G Ninja
 
       - name: Build
         run: cmake --build build --parallel
 
-      - name: Run tests
+      - name: Run tests under sanitizers
         working-directory: build
         run: |
           set -euo pipefail
@@ -79,14 +69,14 @@ jobs:
             if "${test_bin}" --gtest_output=xml:"${test_bin}.xml" 2>&1; then
               PASSED=$((PASSED + 1))
             else
-              echo "FAILED: ${test_bin}"
+              echo "FAILED (sanitizer or test error): ${test_bin}"
               FAILED=$((FAILED + 1))
             fi
           done
 
           echo ""
           echo "=========================================="
-          echo "Test Summary: ${PASSED}/${TOTAL} passed, ${FAILED} failed"
+          echo "Sanitizer Summary: ${PASSED}/${TOTAL} passed, ${FAILED} failed"
           echo "=========================================="
 
           if [ "${FAILED}" -ne 0 ]; then
@@ -97,6 +87,6 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-${{ matrix.os }}-${{ matrix.compiler }}
+          name: sanitizer-test-results
           path: build/**/*.xml
           retention-days: 14

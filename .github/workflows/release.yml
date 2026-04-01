@@ -1,0 +1,135 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    name: Build Release (${{ matrix.os }}, ${{ matrix.compiler }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            compiler: gcc-12
+            cc: gcc-12
+            cxx: g++-12
+            pkg: gcc-12 g++-12
+            artifact_suffix: linux-x86_64-gcc12
+          - os: ubuntu-24.04
+            compiler: gcc-14
+            cc: gcc-14
+            cxx: g++-14
+            pkg: gcc-14 g++-14
+            artifact_suffix: linux-x86_64-gcc14
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            cmake ninja-build \
+            libssl-dev libldap-dev \
+            ${{ matrix.pkg }}
+
+      - name: Configure
+        env:
+          CC: ${{ matrix.cc }}
+          CXX: ${{ matrix.cxx }}
+        run: |
+          cmake -S . -B build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DBUILD_TESTING=ON \
+            -G Ninja
+
+      - name: Build
+        run: cmake --build build --parallel
+
+      - name: Run tests
+        working-directory: build
+        run: |
+          set -euo pipefail
+          FAILED=0
+          for test_bin in $(find . -maxdepth 4 -type f -name '*_test' -executable | sort); do
+            if ! "${test_bin}" 2>&1; then
+              FAILED=$((FAILED + 1))
+              echo "FAILED: ${test_bin}"
+            fi
+          done
+          if [ "${FAILED}" -ne 0 ]; then
+            echo "${FAILED} test binary(ies) failed"
+            exit 1
+          fi
+
+      - name: Package artifacts
+        run: |
+          mkdir -p dist
+          cp build/libopenarangodb_enterprise.a dist/
+          cp build/libarango_rclone.a dist/
+          tar czf "openarangodb-core-${{ github.ref_name }}-${{ matrix.artifact_suffix }}.tar.gz" \
+            -C dist .
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openarangodb-core-${{ github.ref_name }}-${{ matrix.artifact_suffix }}
+          path: "openarangodb-core-${{ github.ref_name }}-${{ matrix.artifact_suffix }}.tar.gz"
+          retention-days: 30
+
+  create-release:
+    name: Create GitHub Release
+    needs: build-release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          # Find the previous tag
+          PREV_TAG=$(git tag --sort=-creatordate | head -n 2 | tail -n 1 || echo "")
+          CURRENT_TAG="${GITHUB_REF_NAME}"
+
+          {
+            echo "changelog<<CHANGELOG_EOF"
+            echo "## What's Changed"
+            echo ""
+            if [ -n "${PREV_TAG}" ] && [ "${PREV_TAG}" != "${CURRENT_TAG}" ]; then
+              git log "${PREV_TAG}..${CURRENT_TAG}" --pretty=format:"- %s (%h)" --no-merges
+            else
+              git log --pretty=format:"- %s (%h)" --no-merges -20
+            fi
+            echo ""
+            echo ""
+            echo "**Full Changelog**: https://github.com/${{ github.repository }}/compare/${PREV_TAG}...${CURRENT_TAG}"
+            echo "CHANGELOG_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: "OpenArangoDBCore ${{ github.ref_name }}"
+          body: ${{ steps.changelog.outputs.changelog }}
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-rc') || contains(github.ref_name, '-beta') || contains(github.ref_name, '-alpha') }}
+          files: artifacts/*.tar.gz
