@@ -1,0 +1,48 @@
+FROM --platform=linux/amd64 ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y \
+    git cmake g++-12 gcc-12 make \
+    libssl-dev libldap2-dev \
+    curl python3 pkg-config \
+    libboost-all-dev \
+    && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 100 \
+    && update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-12 100 \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /build
+
+# Clone ArangoDB
+ARG ARANGODB_BRANCH=v3.12.0
+RUN git clone --depth 1 --branch ${ARANGODB_BRANCH} --recurse-submodules --shallow-submodules https://github.com/arangodb/arangodb.git
+
+# Copy OpenArangoDBCore as enterprise/
+COPY . /build/arangodb/enterprise/
+
+# Configure — skip frontend (SKIP_PACKAGING), target only server binary
+RUN mkdir -p /build/arangodb/build && cd /build/arangodb/build \
+    && cmake .. \
+       -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+       -DUSE_ENTERPRISE=1 \
+       -DUSE_MAINTAINER_MODE=OFF \
+       -DCMAKE_C_COMPILER=gcc-12 \
+       -DCMAKE_CXX_COMPILER=g++-12 \
+       -DUSE_FRONTEND=OFF \
+       -DSKIP_PACKAGING=ON
+
+# Build arangod server binary
+RUN cd /build/arangodb/build \
+    && cmake --build . --target arangod -j$(nproc)
+
+# Verify no unresolved enterprise symbols
+RUN ARANGOD=$(find /build/arangodb/build -name arangod -type f -executable | head -1) \
+    && if [ -n "$ARANGOD" ]; then \
+         echo "=== Binary found: $ARANGOD ==="; \
+         echo "=== File size: $(du -h "$ARANGOD" | cut -f1) ==="; \
+         UNDEF=$(nm "$ARANGOD" 2>/dev/null | grep ' U ' | grep -iE '(enterprise|EE|SmartGraph|Audit|HotBackup|Encryption)' || true); \
+         if [ -z "$UNDEF" ]; then echo "PASS: No unresolved enterprise symbols"; \
+         else echo "FAIL: Unresolved symbols:"; echo "$UNDEF" | head -20; exit 1; fi; \
+       else echo "FAIL: arangod binary not found"; exit 1; fi
+
+CMD ["echo", "Integration build and symbol verification succeeded"]

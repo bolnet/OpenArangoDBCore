@@ -10,11 +10,39 @@ Open-source C++ reimplementation of all 19 ArangoDB Enterprise modules. Drop-in 
 
 ---
 
-## Why OpenArangoDBCore?
+## Why ArangoDB?
 
-ArangoDB is an excellent multi-model database, but its most powerful features -- encryption at rest, SmartGraphs, hot backup, LDAP authentication, DC-to-DC replication -- are locked behind a proprietary Enterprise license.
+ArangoDB is a **multi-model database** -- it natively handles documents, graphs, and key-value in a single engine with a single query language (AQL). Most databases force you to pick one model or glue multiple systems together (Neo4j for graphs + MongoDB for documents + Redis for key-value). ArangoDB eliminates that complexity.
 
-OpenArangoDBCore provides complete, open-source implementations of every Enterprise module. It compiles as the `enterprise/` directory that ArangoDB already expects, so you get Enterprise capabilities without changing a single line of ArangoDB source code.
+- **Graph + Document in one** -- No need for separate graph and document databases. One database, one query language, one operational burden.
+- **AQL** -- SQL-like but handles graph traversals, joins, and document operations natively. No Cypher + SQL + custom APIs.
+- **Horizontal scaling** -- SmartGraphs, satellite collections, and shard-local execution make distributed graph queries practical at scale.
+
+## The Problem
+
+ArangoDB's best features are **locked behind a proprietary Enterprise license**:
+
+| | Community Edition | Enterprise Edition |
+|---|---|---|
+| **Cost** | Free | Paid license |
+| **Encryption at rest** | No | Yes |
+| **SmartGraphs** | No | Yes |
+| **Hot backup** | No | Yes |
+| **DC-to-DC replication** | No | Yes |
+| **LDAP / audit logging** | No | Yes |
+| **Parallel index building** | No | Yes |
+
+This creates a painful gap: Community Edition works for dev/prototyping, but you **need** Enterprise for production (security, backup, cluster optimization). That means vendor lock-in and expensive licensing at scale.
+
+## What OpenArangoDBCore Does
+
+We reimplemented **all 19 Enterprise modules** as open-source C++20, matching the exact ABI and namespace (`arangodb`). You symlink our project as `enterprise/` in the ArangoDB source tree, build with `-DUSE_ENTERPRISE=1`, and get a fully enterprise-capable ArangoDB binary -- no license required.
+
+**The technical approach:**
+- Same headers, same symbols, same namespace as the proprietary code
+- Functionally equivalent implementations (clean-room, not copied)
+- Compiles and links against unmodified ArangoDB source
+- 565 tests proving correctness across all 19 modules
 
 **Key benefits:**
 

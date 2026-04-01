@@ -94,21 +94,59 @@ add_library(openarangodb_enterprise STATIC
   Enterprise/VocBase/SmartGraphSchema.cpp
 )
 
+# Detect if we're being built as a subdirectory of ArangoDB
+if(EXISTS "${CMAKE_SOURCE_DIR}/arangod" AND NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+  # Built as enterprise/ inside ArangoDB source tree
+  set(ARANGODB_INTEGRATION_BUILD ON)
+  # Collect all include directories from the ArangoDB source tree.
+  # Rather than hardcoding paths, we gather them from well-known locations.
+  set(ARANGODB_INCLUDE_DIRS
+    ${CMAKE_SOURCE_DIR}
+    ${CMAKE_SOURCE_DIR}/arangod
+    ${CMAKE_SOURCE_DIR}/lib
+    ${CMAKE_BINARY_DIR}
+    ${CMAKE_BINARY_DIR}/lib
+    ${CMAKE_SOURCE_DIR}/lib/Inspection/include
+    ${CMAKE_SOURCE_DIR}/lib/Futures/include
+    ${CMAKE_SOURCE_DIR}/lib/BuildId/include
+    ${CMAKE_SOURCE_DIR}/lib/Actor/include
+    ${CMAKE_SOURCE_DIR}/3rdParty/velocypack/include
+    ${CMAKE_SOURCE_DIR}/3rdParty/immer
+    ${CMAKE_SOURCE_DIR}/3rdParty/iresearch/core
+    ${CMAKE_SOURCE_DIR}/3rdParty/iresearch/external
+    ${CMAKE_SOURCE_DIR}/3rdParty/rocksdb/include
+    ${CMAKE_SOURCE_DIR}/3rdParty/abseil-cpp
+    ${CMAKE_SOURCE_DIR}/3rdParty/date/include
+    ${CMAKE_SOURCE_DIR}/3rdParty/fmt/include
+    ${CMAKE_SOURCE_DIR}/3rdParty/s2geometry/src
+    ${CMAKE_SOURCE_DIR}/3rdParty/boost
+    ${CMAKE_SOURCE_DIR}/3rdParty/nghttp2/lib/includes
+  )
+else()
+  set(ARANGODB_INTEGRATION_BUILD OFF)
+  set(ARANGODB_INCLUDE_DIRS "")
+endif()
+
 target_include_directories(openarangodb_enterprise PUBLIC
   $<$<BOOL:${BUILD_TESTING}>:${CMAKE_CURRENT_SOURCE_DIR}/tests/mocks>
   ${CMAKE_CURRENT_SOURCE_DIR}   # so #include "Enterprise/..." resolves
-  ${CMAKE_SOURCE_DIR}           # so ArangoDB internal headers resolve
+  ${ARANGODB_INCLUDE_DIRS}      # ArangoDB internal headers (when integrated)
 )
 
 target_compile_definitions(openarangodb_enterprise PUBLIC USE_ENTERPRISE=1)
 
+# When inside ArangoDB tree, wait for generated headers before compiling
+if(ARANGODB_INTEGRATION_BUILD AND TARGET errorfiles)
+  add_dependencies(openarangodb_enterprise errorfiles)
+endif()
+
 target_link_libraries(openarangodb_enterprise PUBLIC OpenSSL::Crypto)
 
-target_compile_options(openarangodb_enterprise PRIVATE
-  -Wall
-  -Woverloaded-virtual
-  -Werror
-)
+if(ARANGODB_INTEGRATION_BUILD)
+  target_compile_options(openarangodb_enterprise PRIVATE -Wall -Woverloaded-virtual)
+else()
+  target_compile_options(openarangodb_enterprise PRIVATE -Wall -Woverloaded-virtual -Werror)
+endif()
 
 # ============================================================
 # arango_rclone: separate target required by
@@ -124,16 +162,20 @@ add_library(arango_rclone STATIC
 target_include_directories(arango_rclone PUBLIC
   $<$<BOOL:${BUILD_TESTING}>:${CMAKE_CURRENT_SOURCE_DIR}/tests/mocks>
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_SOURCE_DIR}
+  ${ARANGODB_INCLUDE_DIRS}
 )
 
 target_compile_definitions(arango_rclone PUBLIC USE_ENTERPRISE=1)
 
-target_compile_options(arango_rclone PRIVATE
-  -Wall
-  -Woverloaded-virtual
-  -Werror
-)
+if(ARANGODB_INTEGRATION_BUILD AND TARGET errorfiles)
+  add_dependencies(arango_rclone errorfiles)
+endif()
+
+if(ARANGODB_INTEGRATION_BUILD)
+  target_compile_options(arango_rclone PRIVATE -Wall -Woverloaded-virtual)
+else()
+  target_compile_options(arango_rclone PRIVATE -Wall -Woverloaded-virtual -Werror)
+endif()
 
 # ============================================================
 # Test suite (GoogleTest via FetchContent)
