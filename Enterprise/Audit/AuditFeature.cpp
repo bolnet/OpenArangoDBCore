@@ -60,11 +60,7 @@ void AuditFeature::collectOptions(
   options->addOption("--audit.output",
                      "audit log output destination(s), e.g. "
                      "file:///path/to/audit.log or syslog://local0",
-#ifdef ARANGODB_INTEGRATION_BUILD
-                     new options::VectorParameter(&_outputSpecs));
-#else
                      new options::VectorParameter<options::StringParameter>(&_outputSpecs));
-#endif
 }
 
 void AuditFeature::validateOptions(

@@ -6,10 +6,11 @@
 
 #ifdef ARANGODB_INTEGRATION_BUILD
 // Real ArangoDB source tree
-// LimitNode is defined in ExecutionNode.h in v3.12.0 (not a separate header)
+// In v3.12.0, LimitNode and EnumerateViewNode are defined within
+// ExecutionNode.h or IResearchViewNode.h — not as separate headers
 #include "Aql/ExecutionNode.h"
 #include "Aql/SortNode.h"
-#include "Aql/EnumerateViewNode.h"
+#include "IResearch/IResearchViewNode.h"
 #else
 // Standalone build — use mock types
 #include "AqlMocks.h"
