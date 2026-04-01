@@ -152,9 +152,10 @@ The `LicenseFeature` module always reports a valid license, so all 18 feature mo
 ### Building with ArangoDB
 
 ```bash
-# 1. Clone ArangoDB
+# 1. Clone ArangoDB and initialize submodules
 git clone https://github.com/arangodb/arangodb.git
 cd arangodb
+git submodule update --init --recursive --depth 1 3rdParty/iresearch
 
 # 2. Clone OpenArangoDBCore as the enterprise directory
 git clone https://github.com/bolnet/OpenArangoDBCore.git enterprise

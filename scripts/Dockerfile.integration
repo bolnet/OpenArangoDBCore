@@ -6,16 +6,19 @@ RUN apt-get update && apt-get install -y \
     git cmake g++-12 gcc-12 make \
     libssl-dev libldap2-dev \
     curl python3 pkg-config \
-    libboost-all-dev \
+    libboost-all-dev liblz4-dev libsnappy-dev libzstd-dev \
     && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 100 \
     && update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-12 100 \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /build
 
-# Clone ArangoDB
+# Clone ArangoDB with all submodules — frozen and function2 live inside
+# 3rdParty/iresearch/external/, V8 is needed for CMake configure to succeed
 ARG ARANGODB_BRANCH=v3.12.0
-RUN git clone --depth 1 --branch ${ARANGODB_BRANCH} --recurse-submodules --shallow-submodules https://github.com/arangodb/arangodb.git
+RUN git clone --depth 1 --branch ${ARANGODB_BRANCH} https://github.com/arangodb/arangodb.git \
+    && cd arangodb \
+    && git submodule update --init --recursive --depth 1
 
 # Copy OpenArangoDBCore as enterprise/
 COPY . /build/arangodb/enterprise/
