@@ -11,7 +11,7 @@
 #include <crt_externs.h>
 #define ENVIRON (*_NSGetEnviron())
 #else
-extern char** environ;
+extern "C" { extern char** environ; }
 #define ENVIRON environ
 #endif
 

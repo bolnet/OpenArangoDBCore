@@ -49,7 +49,7 @@ Mock headers in `tests/mocks/` have been progressively aligned with real ArangoD
 - ~~**`ArangodFeatures` type**~~ **RESOLVED** — Research showed ArangodServer is a plain class (no TypeList template). Fixed `EnterpriseCompat.h` to include `RestServer/arangod.h` directly in integration mode.
 - ~~**`ProgramOptions` Parameter types**~~ **RESOLVED** — Mock aligned with real API: `struct` (not `class`), template `NumericParameter<T>`, template `VectorParameter<T>`, added missing types (`DiscreteValuesParameter`, `ObsoleteParameter`, etc.). Enterprise code updated to use `VectorParameter<StringParameter>`.
 - ~~**`environ` linkage**~~ **RESOLVED** — Already correct: standard POSIX `extern char** environ` on Linux, `_NSGetEnviron()` on macOS. No ODR violation with `extern` declarations.
-- ~~**FetchContent dependencies**~~ **RESOLVED** — `frozen` and `function2` are vendored under `3rdParty/` (not FetchContent). Fixed `function2` include path from `3rdParty/function2/include` to `3rdParty/function2` (no `/include` subfolder).
+- ~~**FetchContent dependencies**~~ **RESOLVED** — `frozen` and `function2` live inside `3rdParty/iresearch/external/` (IResearch submodule). Fixed include paths from `3rdParty/frozen/include` and `3rdParty/function2` to `3rdParty/iresearch/external/frozen/include` and `3rdParty/iresearch/external/function2`. Dockerfile updated to init IResearch submodule recursively.
 
 ### V8 ARM64 Build
 

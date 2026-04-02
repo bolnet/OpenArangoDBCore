@@ -3,7 +3,12 @@
 #include <stdexcept>
 #include <type_traits>
 
+#ifdef ARANGODB_INTEGRATION_BUILD
 #include "ProgramOptions/ProgramOptions.h"
+#include "ProgramOptions/Parameters.h"
+#else
+#include "ProgramOptions/ProgramOptions.h"
+#endif
 
 static_assert(!std::is_abstract_v<arangodb::SslServerFeatureEE>,
               "SslServerFeatureEE must not be abstract");
@@ -60,43 +65,20 @@ void SslServerFeatureEE::verifySslOptions() {
   }
 }
 
+// createSslContexts and dumpTLSData use mock types (SslContextList,
+// Result::success()) that don't exist in real ArangoDB. In integration mode,
+// the real SslServerFeature handles these methods.
+#ifndef ARANGODB_INTEGRATION_BUILD
+
 SslContextList SslServerFeatureEE::createSslContexts() {
-  // Start with base SSL context creation
   auto contexts = SslServerFeature::createSslContexts();
-
-  // In a real OpenSSL environment, we would:
-  //
-  // For mTLS (if _requireClientCert is true):
-  //   SSL_CTX_set_verify(ctx, SSL_VERIFY_PEER | SSL_VERIFY_FAIL_IF_NO_PEER_CERT,
-  //                      nullptr);
-  //   SSL_CTX_load_verify_locations(ctx, caFile, caPath);
-  //
-  // For cipher suite restrictions (if _allowedCipherSuites is set):
-  //   SSL_CTX_set_cipher_list(ctx, _allowedCipherSuites.c_str());  // TLS 1.2
-  //   SSL_CTX_set_ciphersuites(ctx, _allowedCipherSuites.c_str()); // TLS 1.3
-  //
-  // For minimum TLS version enforcement:
-  //   uint64_t minVersion = (_minTlsVersion == "1.3") ?
-  //     TLS1_3_VERSION : TLS1_2_VERSION;
-  //   SSL_CTX_set_min_proto_version(ctx, minVersion);
-  //
-  // Since we compile against mock SSL headers for standalone testing,
-  // we record the configuration intent for verification.
-
   return contexts;
 }
 
 Result SslServerFeatureEE::dumpTLSData(VPackBuilder& builder) const {
-  // In production, this would serialize enterprise TLS config to VPack.
-  // The base class handles standard fields; we add enterprise-specific ones.
-  //
-  // builder.add("requireClientCert", VPackValue(_requireClientCert));
-  // builder.add("minTlsVersion", VPackValue(_minTlsVersion));
-  // if (!_allowedCipherSuites.empty()) {
-  //   builder.add("allowedCipherSuites", VPackValue(_allowedCipherSuites));
-  // }
-
   return Result::success();
 }
+
+#endif  // !ARANGODB_INTEGRATION_BUILD
 
 }  // namespace arangodb

@@ -1,6 +1,11 @@
 #include "AuditFeature.h"
 
+#ifdef ARANGODB_INTEGRATION_BUILD
 #include "ProgramOptions/ProgramOptions.h"
+#include "ProgramOptions/Parameters.h"
+#else
+#include "ProgramOptions/ProgramOptions.h"
+#endif
 
 #include <chrono>
 #include <iomanip>

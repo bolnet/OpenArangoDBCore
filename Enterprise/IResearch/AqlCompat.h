@@ -5,11 +5,11 @@
 /// In integration mode, includes the real AQL execution node types.
 
 #ifdef ARANGODB_INTEGRATION_BUILD
-// Real ArangoDB source tree
+// Real ArangoDB source tree — ExecutionNode.h defines the base types.
+// Our TopK optimizer uses mock types (MockSortNode etc.) which are
+// only used in standalone mode. In integration mode, the real optimizer
+// lives in arangod and our code is not compiled into the TopK path.
 #include "Aql/ExecutionNode.h"
-#include "Aql/SortNode.h"
-#include "Aql/LimitNode.h"
-#include "Aql/EnumerateViewNode.h"
 #else
 // Standalone build — use mock types
 #include "AqlMocks.h"

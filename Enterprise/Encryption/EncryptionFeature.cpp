@@ -6,7 +6,12 @@
 
 #include "Enterprise/RocksDBEngine/EncryptionProvider.h"
 #include "Enterprise/RocksDBEngine/RocksDBEncryptionUtils.h"
+#ifdef ARANGODB_INTEGRATION_BUILD
 #include "ProgramOptions/ProgramOptions.h"
+#include "ProgramOptions/Parameters.h"
+#else
+#include "ProgramOptions/ProgramOptions.h"
+#endif
 
 static_assert(!std::is_abstract_v<arangodb::EncryptionFeature>,
               "EncryptionFeature must not be abstract");
