@@ -1,6 +1,6 @@
 #include "AuditFeature.h"
 
-#ifdef ARANGODB_INTEGRATION_BUILD
+#if defined(ARANGODB_INTEGRATION_BUILD) || __has_include("ProgramOptions/Parameters.h")
 #include "ProgramOptions/ProgramOptions.h"
 #include "ProgramOptions/Parameters.h"
 #else
@@ -23,6 +23,12 @@
 
 static_assert(!std::is_abstract_v<arangodb::AuditFeature>,
               "AuditFeature must not be abstract");
+
+// ArangoDB core (LogTopic.cpp) expects these static definitions to exist
+// in the enterprise directory. They are only needed in integration mode.
+// Note: In real ArangoDB, LogTopic.cpp defines these — but since our
+// AuditFeature replaces the real one, we must provide the declarations
+// so the compiler can see them if our header is included.
 
 namespace arangodb {
 

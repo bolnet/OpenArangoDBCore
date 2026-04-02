@@ -8,7 +8,10 @@
 ///   Include the real ApplicationFeature framework and RestServer/arangod.h
 ///   which defines ArangodServer as a plain class (not a TypeList template).
 
-#ifdef ARANGODB_INTEGRATION_BUILD
+// Auto-detect: if RestServer/arangod.h is on the include path, we're inside
+// the real ArangoDB source tree. This works regardless of which CMake target
+// compiles the translation unit (our enterprise target OR arangod's own targets).
+#if defined(ARANGODB_INTEGRATION_BUILD) || __has_include("RestServer/arangod.h")
 // Real ArangoDB source tree — ArangodServer is a plain class inheriting
 // ApplicationServer.  Feature registration is runtime (addFeature<T>()),
 // not compile-time TypeList.

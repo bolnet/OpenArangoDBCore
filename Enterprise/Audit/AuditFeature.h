@@ -6,7 +6,15 @@
 #include <vector>
 
 #include "Enterprise/Basics/EnterpriseCompat.h"
+
+// Always include our AuditLogger (our own implementation, needed in both modes)
 #include "Enterprise/Audit/AuditLogger.h"
+
+// In integration mode, also include real LogTopic for static audit log topics
+// that ArangoDB core (LogTopic.cpp) expects as static members.
+#if defined(ARANGODB_INTEGRATION_BUILD) || __has_include("Logger/LogTopic.h")
+#include "Logger/LogTopic.h"
+#endif
 
 namespace arangodb {
 
@@ -17,6 +25,19 @@ class ProgramOptions;
 class AuditFeature final : public ArangodFeature {
  public:
   static constexpr std::string_view name() noexcept { return "Audit"; }
+
+  // Static audit log topics — required by ArangoDB core (LogTopic.cpp).
+  // These are defined in AuditFeature.cpp.
+#if defined(ARANGODB_INTEGRATION_BUILD) || __has_include("Logger/LogTopic.h")
+  static LogTopic AUDIT_AUTHENTICATION;
+  static LogTopic AUDIT_AUTHORIZATION;
+  static LogTopic AUDIT_DATABASE;
+  static LogTopic AUDIT_COLLECTION;
+  static LogTopic AUDIT_VIEW;
+  static LogTopic AUDIT_DOCUMENT;
+  static LogTopic AUDIT_SERVICE;
+  static LogTopic AUDIT_HOTBACKUP;
+#endif
 
   explicit AuditFeature(ArangodServer& server);
 

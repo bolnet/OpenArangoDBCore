@@ -40,7 +40,7 @@ class SslServerFeatureEE final : public SslServerFeature {
   // Override to add enterprise validation (minimum TLS version enforcement).
   void verifySslOptions() override;
 
-#ifndef ARANGODB_INTEGRATION_BUILD
+#if !defined(ARANGODB_INTEGRATION_BUILD) && !__has_include("RestServer/arangod.h")
   // Override to configure mTLS (client certificate verification) and
   // cipher suite restrictions.
   // Guarded: SslContextList is a mock type not available in integration mode.
