@@ -52,7 +52,7 @@
 // AQL type compatibility — mock types in standalone, real types in integration.
 // In integration mode, the real ArangoDB optimizer handles TopK pattern
 // detection, so we only include mock types for standalone builds.
-#ifndef ARANGODB_INTEGRATION_BUILD
+#if !defined(ARANGODB_INTEGRATION_BUILD) && !__has_include("RestServer/arangod.h")
 #include "Enterprise/IResearch/AqlCompat.h"
 #endif
 
@@ -202,7 +202,7 @@ std::unique_ptr<ScoredDocIterator> WandExecutionContext::wrapIterator(
 // MockLimitNode, MockEnumerateViewNode, MockExecutionNode) which only exist
 // in standalone builds. In integration mode, the real ArangoDB optimizer
 // handles TopK pattern detection via arangod's OptimizerRules.
-#ifndef ARANGODB_INTEGRATION_BUILD
+#if !defined(ARANGODB_INTEGRATION_BUILD) && !__has_include("RestServer/arangod.h")
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Optimizer rule: BM25 sort element detection

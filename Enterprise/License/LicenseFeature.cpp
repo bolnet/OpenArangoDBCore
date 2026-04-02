@@ -4,7 +4,7 @@
 #include <type_traits>
 
 // ApplicationServer types provided via EnterpriseCompat.h (included by header)
-#ifdef ARANGODB_INTEGRATION_BUILD
+#if defined(ARANGODB_INTEGRATION_BUILD) || __has_include("ProgramOptions/Parameters.h")
 #include "ProgramOptions/ProgramOptions.h"
 #include "ProgramOptions/Parameters.h"
 #else

@@ -13,7 +13,7 @@
 // Forward declarations for AQL mock types used in optimizer rule.
 // In integration mode, the real ArangoDB optimizer handles TopK pattern
 // detection, so these mock-dependent declarations are not needed.
-#ifndef ARANGODB_INTEGRATION_BUILD
+#if !defined(ARANGODB_INTEGRATION_BUILD) && !__has_include("RestServer/arangod.h")
 namespace arangodb {
 namespace aql {
 struct SortElement;
@@ -118,7 +118,7 @@ class WandIterator : public ScoredDocIterator {
 /// are only compiled in standalone mode for testing.
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef ARANGODB_INTEGRATION_BUILD
+#if !defined(ARANGODB_INTEGRATION_BUILD) && !__has_include("RestServer/arangod.h")
 /// Detects EnumerateViewNode -> SortNode(BM25 desc) -> LimitNode(k) patterns
 /// and annotates the EnumerateViewNode with WAND parameters.
 /// Does not create new node types; modifies existing nodes in-place.

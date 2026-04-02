@@ -6,7 +6,7 @@
 
 #include "Enterprise/RocksDBEngine/EncryptionProvider.h"
 #include "Enterprise/RocksDBEngine/RocksDBEncryptionUtils.h"
-#ifdef ARANGODB_INTEGRATION_BUILD
+#if defined(ARANGODB_INTEGRATION_BUILD) || __has_include("ProgramOptions/Parameters.h")
 #include "ProgramOptions/ProgramOptions.h"
 #include "ProgramOptions/Parameters.h"
 #else

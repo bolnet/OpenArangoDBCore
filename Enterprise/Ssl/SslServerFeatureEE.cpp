@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <type_traits>
 
-#ifdef ARANGODB_INTEGRATION_BUILD
+#if defined(ARANGODB_INTEGRATION_BUILD) || __has_include("ProgramOptions/Parameters.h")
 #include "ProgramOptions/ProgramOptions.h"
 #include "ProgramOptions/Parameters.h"
 #else
@@ -68,7 +68,7 @@ void SslServerFeatureEE::verifySslOptions() {
 // createSslContexts and dumpTLSData use mock types (SslContextList,
 // Result::success()) that don't exist in real ArangoDB. In integration mode,
 // the real SslServerFeature handles these methods.
-#ifndef ARANGODB_INTEGRATION_BUILD
+#if !defined(ARANGODB_INTEGRATION_BUILD) && !__has_include("RestServer/arangod.h")
 
 SslContextList SslServerFeatureEE::createSslContexts() {
   auto contexts = SslServerFeature::createSslContexts();
