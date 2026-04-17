@@ -2,13 +2,15 @@ FROM --platform=linux/amd64 ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+# GCC-11 is required: V8 (bundled in ArangoDB v3.12) fails to compile with
+# GCC-12+ due to -Werror on new warnings in torque/implementation-visitor.cc.
 RUN apt-get update && apt-get install -y \
-    git cmake g++-12 gcc-12 make \
+    git cmake g++-11 gcc-11 make \
     libssl-dev libldap2-dev \
     curl python3 pkg-config \
     libboost-all-dev liblz4-dev libsnappy-dev libzstd-dev \
-    && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 100 \
-    && update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-12 100 \
+    && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 100 \
+    && update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-11 100 \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /build
@@ -29,8 +31,8 @@ RUN mkdir -p /build/arangodb/build && cd /build/arangodb/build \
        -DCMAKE_BUILD_TYPE=RelWithDebInfo \
        -DUSE_ENTERPRISE=1 \
        -DUSE_MAINTAINER_MODE=OFF \
-       -DCMAKE_C_COMPILER=gcc-12 \
-       -DCMAKE_CXX_COMPILER=g++-12 \
+       -DCMAKE_C_COMPILER=gcc-11 \
+       -DCMAKE_CXX_COMPILER=g++-11 \
        -DUSE_FRONTEND=OFF \
        -DSKIP_PACKAGING=ON
 
